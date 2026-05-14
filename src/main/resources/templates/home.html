@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Zenith | Investor Dashboard</title>
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Tailwind Configuration (Design System Tokens) -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#1f2020",
+                        "tertiary": "#fbf8f7",
+                        "outline": "#84967c",
+                        "on-secondary-container": "#bab8b7",
+                        "on-primary-fixed": "#002200",
+                        "inverse-on-surface": "#303031",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#121414",
+                        "on-surface-variant": "#b9ccaf",
+                        "inverse-primary": "#026e00",
+                        "secondary": "#c9c6c5",
+                        "on-secondary-fixed-variant": "#474646",
+                        "on-error-container": "#ffdad6",
+                        "background": "#121414",
+                        "surface-bright": "#383939",
+                        "secondary-container": "#4a4949",
+                        "secondary-fixed-dim": "#c9c6c5",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "on-background": "#e3e2e2",
+                        "on-primary": "#013a00",
+                        "on-error": "#690005",
+                        "primary-fixed": "#77ff61",
+                        "surface-tint": "#02e600",
+                        "surface-container-highest": "#343535",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#015300",
+                        "surface-container-high": "#292a2a",
+                        "on-surface": "#e3e2e2",
+                        "primary-fixed-dim": "#02e600",
+                        "primary": "#eaffde",
+                        "tertiary-container": "#dedbdb",
+                        "surface-container-low": "#1b1c1c",
+                        "surface-variant": "#343535",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "inverse-surface": "#e3e2e2",
+                        "secondary-fixed": "#e5e2e1",
+                        "outline-variant": "#3b4b35",
+                        "primary-container": "#00ff00",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary": "#313030",
+                        "on-primary-container": "#027100",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface": "#121414",
+                        "surface-container-lowest": "#0d0e0f",
+                        "on-tertiary": "#313030",
+                        "on-tertiary-container": "#616060"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-sm": ["JetBrains Mono"],
+                        "data-lg": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "data-sm": ["12px", { "lineHeight": "1.0", "fontWeight": "400" }],
+                        "data-lg": ["20px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-caps": ["11px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base terminal grid background pattern */
+        .bg-terminal-grid {
+            background-image: linear-gradient(to right, rgba(119,255,97,0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(119,255,97,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md antialiased relative min-h-screen selection:bg-primary selection:text-on-primary-fixed overflow-x-hidden">
+<!-- Global Terminal Grid Background Overlay -->
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid z-0"></div>
+<!-- Background Ambient Glow -->
+<div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary-fixed/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+<!-- Shared Component: TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant shadow-[0_0_20px_rgba(119,255,97,0.15)]">
+    <div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto">
+        <!-- Brand -->
+        <div class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter cursor-pointer flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+            Zenith
+        </div>
+        <!-- Navigation Links (Web) -->
+        <nav class="hidden md:flex gap-8">
+            <a class="text-primary font-body-md text-body-md transition-colors duration-200" href="#">Dashboard</a>
+            <a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-200" href="#">Carteiras</a>
+            <a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-200" href="#">Relatórios</a>
+        </nav>
+        <!-- Actions -->
+        <div class="flex items-center gap-4">
+            <button class="hidden md:block font-label-caps text-label-caps uppercase text-secondary hover:text-primary transition-colors duration-200 tracking-[0.1em]">
+                Perfil
+            </button>
+            <button class="border border-outline-variant text-secondary font-label-caps text-label-caps uppercase px-6 py-2.5 rounded-none hover:border-primary hover:text-primary transition-colors active:scale-95 duration-200 tracking-[0.1em]">
+                Sair
+            </button>
+        </div>
+    </div>
+</header>
+<!-- Main Canvas -->
+<main class="relative z-10 pt-[120px] pb-24">
+    <!-- Hero Section / Greeting -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 flex flex-col md:flex-row items-start md:items-center justify-between relative gap-6">
+        <div>
+            <div class="font-data-sm text-data-sm text-primary-fixed mb-2 flex items-center gap-2 opacity-80">
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                <span>session.active(user="[Nome do Investidor]");</span>
+                <span class="animate-pulse w-2 h-4 bg-primary-fixed inline-block"></span>
+            </div>
+            <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-on-surface to-secondary">
+                Bem-vindo, [Nome]
+            </h1>
+        </div>
+        <button class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps uppercase px-8 py-4 rounded-none hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(119,255,97,0.3)] tracking-[0.1em]">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            Nova Carteira
+        </button>
+    </section>
+    <!-- Live Market Pulse (Ticker Strip) -->
+    <section class="border-t border-b border-outline-variant bg-surface/40 backdrop-blur-md py-3 overflow-hidden mb-12">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center gap-8 whitespace-nowrap overflow-x-auto hide-scrollbar">
+            <div class="flex items-center gap-2 border-r border-outline-variant pr-8 shrink-0">
+                <span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse shadow-[0_0_8px_rgba(119,255,97,0.8)]"></span>
+                <span class="font-data-sm text-data-sm text-primary-fixed tracking-widest uppercase">System Status: Optimal</span>
+            </div>
+            <!-- Mock Tickers -->
+            <div class="flex items-center gap-8 font-data-sm text-data-sm">
+                <div class="flex items-center gap-3">
+                    <span class="text-secondary">ZTH/BRL</span>
+                    <span class="text-on-surface">6.450,89</span>
+                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_up</span> 2.4%</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-secondary">BTC/BRL</span>
+                    <span class="text-on-surface">334.001,20</span>
+                    <span class="text-error flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_down</span> 0.8%</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-secondary">ETH/BRL</span>
+                    <span class="text-on-surface">18.159,44</span>
+                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_up</span> 1.1%</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-secondary">SOL/BRL</span>
+                    <span class="text-on-surface">758,16</span>
+                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_up</span> 4.2%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Global Summary -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-12">
+        <div class="border border-outline-variant bg-surface/10 backdrop-blur-xl p-8 relative overflow-hidden rounded-none">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/5 rounded-full blur-[80px] pointer-events-none"></div>
+            <div class="flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-secondary">monitoring</span>
+                <h2 class="font-data-lg text-data-lg text-on-surface uppercase tracking-widest text-secondary">Resumo Global</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Total Equity -->
+                <div class="border-l-2 border-primary-fixed pl-6">
+                    <p class="font-data-sm text-data-sm text-secondary mb-2">[ PATRIMÔNIO_TOTAL ]</p>
+                    <p class="font-headline-lg text-headline-lg text-primary-fixed tracking-tight">R$ 150.420,00</p>
+                </div>
+                <!-- Available Balance -->
+                <div class="border-l border-outline-variant pl-6">
+                    <p class="font-data-sm text-data-sm text-secondary mb-2">[ SALDO_DISPONÍVEL ]</p>
+                    <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">R$ 20.000,00</p>
+                </div>
+                <!-- Invested Value -->
+                <div class="border-l border-outline-variant pl-6">
+                    <p class="font-data-sm text-data-sm text-secondary mb-2">[ VALOR_INVESTIDO ]</p>
+                    <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">R$ 130.420,00</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Wallets List -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-24">
+        <div class="flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+            <h2 class="font-data-lg text-data-lg text-on-surface uppercase tracking-widest text-secondary">Lista de Carteiras</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <!-- Card 1 -->
+            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden rounded-none flex flex-col justify-between cursor-pointer">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                <div class="flex justify-between items-start mb-6">
+                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Carteira Principal</h3>
+                    <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">arrow_outward</span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-data-sm text-data-sm text-secondary mb-1">Criação:</p>
+                        <p class="font-data-sm text-data-sm text-on-surface">12/05/2023</p>
+                    </div>
+                    <div>
+                        <p class="font-data-sm text-data-sm text-secondary mb-1">Saldo Disponível:</p>
+                        <p class="font-data-lg text-data-lg text-primary-fixed">R$ 15.000,00</p>
+                    </div>
+                </div>
+                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-data-sm text-outline group-hover:text-primary transition-colors flex items-center gap-2">
+                    <span>[ ID: WLT-8932A ]</span>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden rounded-none flex flex-col justify-between cursor-pointer">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                <div class="flex justify-between items-start mb-6">
+                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Fundo de Emergência</h3>
+                    <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">arrow_outward</span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-data-sm text-data-sm text-secondary mb-1">Criação:</p>
+                        <p class="font-data-sm text-data-sm text-on-surface">24/08/2023</p>
+                    </div>
+                    <div>
+                        <p class="font-data-sm text-data-sm text-secondary mb-1">Saldo Disponível:</p>
+                        <p class="font-data-lg text-data-lg text-primary-fixed">R$ 5.000,00</p>
+                    </div>
+                </div>
+                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-data-sm text-outline group-hover:text-primary transition-colors flex items-center gap-2">
+                    <span>[ ID: WLT-2144B ]</span>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden rounded-none flex flex-col justify-between cursor-pointer border-dashed hover:border-solid flex items-center justify-center text-center">
+                <span class="material-symbols-outlined text-[48px] text-outline mb-4 group-hover:text-primary transition-colors">add_circle</span>
+                <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">Criar Nova Carteira</h3>
+                <p class="font-data-sm text-data-sm text-secondary">Inicialize um novo container de ativos.</p>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Shared Component: Footer -->
+<footer class="bg-surface-container-lowest w-full py-12 border-t border-outline-variant relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+        <!-- Brand Column -->
+        <div class="flex flex-col gap-4">
+            <div class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+                Zenith
+            </div>
+            <p class="font-data-sm text-data-sm text-on-surface-variant max-w-xs mt-2">
+                High-velocity data processing and financial sovereignty infrastructure.
+            </p>
+        </div>
+        <!-- Links Column -->
+        <div class="flex flex-col gap-3">
+            <span class="font-label-caps text-label-caps text-secondary mb-2 tracking-widest uppercase">Legal</span>
+            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Privacy Policy</a>
+            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Terms of Service</a>
+            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Cookie Policy</a>
+            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Regulatory Disclosures</a>
+        </div>
+        <!-- Empty Column for Grid Alignment -->
+        <div class="hidden md:block"></div>
+        <!-- Copyright Column -->
+        <div class="flex items-end justify-start md:justify-end">
+            <p class="font-data-sm text-data-sm text-on-surface-variant opacity-60">
+                © 2024 Zenith Financial Sovereignty. All rights reserved.
+            </p>
+        </div>
+    </div>
+</footer>
+<style>
+    /* Hide scrollbar for ticker */
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+</body></html>
