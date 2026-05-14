@@ -1,9 +1,16 @@
 package com.example.zenith.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Transacao {
 
@@ -32,8 +39,6 @@ public class Transacao {
     @Column(nullable = false)
     private LocalDateTime dataOperacao = LocalDateTime.now();
 
-    public Transacao() {}
-
     // Método de Negócio exigido no UML
     public BigDecimal calcularValorTotal() {
         if (precoUnitario != null) {
@@ -41,20 +46,4 @@ public class Transacao {
         }
         return BigDecimal.ZERO;
     }
-
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Carteira getCarteira() { return carteira; }
-    public void setCarteira(Carteira carteira) { this.carteira = carteira; }
-    public Ativo getAtivo() { return ativo; }
-    public void setAtivo(Ativo ativo) { this.ativo = ativo; }
-    public TipoTransacao getTipo() { return tipo; }
-    public void setTipo(TipoTransacao tipo) { this.tipo = tipo; }
-    public int getQuantidade() { return quantidade; }
-    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
-    public BigDecimal getPrecoUnitario() { return precoUnitario; }
-    public void setPrecoUnitario(BigDecimal precoUnitario) { this.precoUnitario = precoUnitario; }
-    public LocalDateTime getDataOperacao() { return dataOperacao; }
-    public void setDataOperacao(LocalDateTime dataOperacao) { this.dataOperacao = dataOperacao; }
 }

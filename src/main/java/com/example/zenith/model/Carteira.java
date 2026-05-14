@@ -1,10 +1,17 @@
 package com.example.zenith.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Carteira {
 
@@ -31,8 +38,6 @@ public class Carteira {
     @OneToMany(mappedBy = "carteira", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transacao> transacoes;
 
-    public Carteira() {}
-
     // Métodos de Negócio exigidos no UML
     public void adicionarSaldo(BigDecimal valor) {
         if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0) {
@@ -49,20 +54,4 @@ public class Carteira {
     public boolean verificarSaldoSuficiente(BigDecimal valorRequerido) {
         return this.saldoDisponivel.compareTo(valorRequerido) >= 0;
     }
-
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public BigDecimal getSaldoDisponivel() { return saldoDisponivel; }
-    public void setSaldoDisponivel(BigDecimal saldoDisponivel) { this.saldoDisponivel = saldoDisponivel; }
-    public LocalDate getDataCriacao() { return dataCriacao; }
-    public void setDataCriacao(LocalDate dataCriacao) { this.dataCriacao = dataCriacao; }
-    public Investidor getInvestidor() { return investidor; }
-    public void setInvestidor(Investidor investidor) { this.investidor = investidor; }
-    public List<Posicao> getPosicoes() { return posicoes; }
-    public void setPosicoes(List<Posicao> posicoes) { this.posicoes = posicoes; }
-    public List<Transacao> getTransacoes() { return transacoes; }
-    public void setTransacoes(List<Transacao> transacoes) { this.transacoes = transacoes; }
 }
