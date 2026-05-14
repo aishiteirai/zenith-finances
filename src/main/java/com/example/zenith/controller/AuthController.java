@@ -11,10 +11,8 @@ public class AuthController {
         // Retorna o nome do ficheiro HTML que está dentro de src/main/resources/templates (sem a extensão .html)
         return "login";
     }
-
-    // Este é um exemplo de rota protegida para onde o utilizador será enviado após entrar
-    @GetMapping("/home")
-    public String home() {
-        return "home"; // Precisarás de criar um ficheiro home.html nos teus templates futuramente
+    @GetMapping("/")
+    public String paginaInicial() {
+        return "index"; // Retorna o index.html que acabámos de criar
     }
 }

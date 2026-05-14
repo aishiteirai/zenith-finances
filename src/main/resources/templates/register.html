@@ -5,7 +5,9 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Zenith Investor Registration</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
   <script id="tailwind-config">
     tailwind.config = {
@@ -13,24 +15,24 @@
       theme: {
         extend: {
           "colors": {
-            "on-secondary-fixed-variant": "#474646", "on-primary": "#013a00", "error-container": "#93000a",
-            "on-background": "#e3e2e2", "error": "#ffb4ab", "surface": "#121414", "on-error-container": "#ffdad6",
-            "on-secondary": "#313030", "inverse-on-surface": "#303031", "surface-container-low": "#1b1c1c",
-            "on-surface-variant": "#b9ccaf", "on-tertiary": "#313030", "surface-variant": "#343535",
-            "on-error": "#690005", "on-surface": "#e3e2e2", "secondary-fixed": "#e5e2e1", "surface-bright": "#383939",
-            "secondary": "#c9c6c5", "secondary-container": "#4a4949", "tertiary": "#fbf8f7", "inverse-surface": "#e3e2e2",
-            "tertiary-fixed": "#e5e2e1", "surface-container-high": "#292a2a", "secondary-fixed-dim": "#c9c6c5",
-            "surface-container-highest": "#343535", "surface-container-lowest": "#0d0e0f", "on-tertiary-fixed-variant": "#474746",
-            "on-tertiary-container": "#616060", "primary": "#eaffde", "on-tertiary-fixed": "#1c1b1b", "background": "#121414",
-            "surface-dim": "#121414", "on-secondary-fixed": "#1c1b1b", "primary-fixed": "#77ff61", "outline": "#84967c",
-            "on-primary-fixed-variant": "#015300", "on-secondary-container": "#bab8b7", "primary-fixed-dim": "#02e600",
-            "outline-variant": "#3b4b35", "surface-tint": "#02e600", "inverse-primary": "#026e00", "tertiary-fixed-dim": "#c8c6c5",
-            "surface-container": "#1f2020", "on-primary-fixed": "#002200", "on-primary-container": "#027100",
-            "primary-container": "#00ff00", "tertiary-container": "#dedbdb"
+            "primary": "#eaffde",
+            "primary-fixed-dim": "#02e600",
+            "on-primary": "#013a00",
+            "surface": "#121414",
+            "on-surface": "#e3e2e2",
+            "on-surface-variant": "#b9ccaf",
+            "surface-container-high": "#292a2a",
+            "surface-container-lowest": "#0d0e0f",
+            "outline-variant": "#3b4b35",
+            "error": "#ffb4ab",
+            "error-container": "#93000a"
           },
           "fontFamily": {
-            "headline-lg": ["Inter"], "data-lg": ["JetBrains Mono"], "label-caps": ["Inter"],
-            "body-md": ["Inter"], "data-sm": ["JetBrains Mono"]
+            "headline-lg": ["Inter"],
+            "data-lg": ["JetBrains Mono"],
+            "label-caps": ["Inter"],
+            "body-md": ["Inter"],
+            "data-sm": ["JetBrains Mono"]
           }
         }
       }
@@ -40,18 +42,46 @@
     body { background-color: #121414; color: #e3e2e2; }
     .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(24px); border: 1px solid #1A1A1A; }
     .glass-panel:hover { border-color: #eaffde; box-shadow: 0 0 20px rgba(119,255,97,0.15); }
-    .input-minimal { background: transparent; border: none; border-bottom: 1px solid #3b4b35; color: #e3e2e2; border-radius: 0; }
-    .input-minimal:focus { outline: none; border-bottom: 1px solid #77ff61; box-shadow: none; border-top: 1px solid #77ff61; border-left: 1px solid #77ff61; border-right: 1px solid #77ff61;}
-    .form-checkbox { background-color: transparent; border-color: #3b4b35; }
-    .form-checkbox:checked { background-color: #77ff61; border-color: #77ff61; }
+
+    /* Forçando o estilo do Input para anular o branco do navegador */
+    .input-minimal {
+      background-color: transparent !important;
+      border: none !important;
+      border-bottom: 1px solid #3b4b35 !important;
+      color: #e3e2e2 !important;
+      border-radius: 0 !important;
+      font-size: 16px !important;
+    }
+
+    .input-minimal:focus {
+      outline: none !important;
+      border-bottom: 1px solid #77ff61 !important;
+      box-shadow: none !important;
+    }
+
+    /* Bloqueio absoluto do fundo branco do Autofill do Chrome */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #121414 inset !important;
+      -webkit-text-fill-color: #e3e2e2 !important;
+      transition: background-color 5000s ease-in-out 0s;
+      caret-color: #eaffde;
+    }
+
+    .form-checkbox { background-color: transparent !important; border-color: #3b4b35 !important; }
+    .form-checkbox:checked { background-color: #77ff61 !important; border-color: #77ff61 !important; }
   </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col font-body-md text-body-md">
+
 <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant shadow-[0_0_20px_rgba(119,255,97,0.15)]">
   <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
     <div class="font-headline-lg text-[24px] font-bold text-primary tracking-tighter">Zenith</div>
-    <div class="text-on-surface-variant font-data-sm flex items-center gap-2">
-      <span class="material-symbols-outlined text-[18px]">lock</span> SECURE REGISTRATION
+    <div class="text-on-surface-variant font-data-sm flex items-center gap-2 uppercase tracking-widest">
+      <span class="material-symbols-outlined text-[18px]">lock</span>
+      Secure Registration
     </div>
   </div>
 </header>
@@ -59,52 +89,59 @@
 <main class="flex-grow pt-32 pb-24 px-8 flex items-center justify-center relative">
   <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
     <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]"></div>
   </div>
 
   <div class="w-full max-w-3xl z-10">
     <div class="mb-12">
       <h1 class="font-display-lg text-[40px] text-primary mb-4">Initialize Profile</h1>
-      <p class="text-on-surface-variant font-data-lg max-w-xl">Configure your investor identity to access institutional-grade analytics.</p>
+      <p class="text-on-surface-variant font-data-lg max-w-xl">Configure your investor identity to access institutional-grade analytics and sovereign assets.</p>
     </div>
 
     <form th:action="@{/register}" method="POST" class="glass-panel p-8 md:p-12 transition-all duration-300">
 
-      <div th:if="${erro}" class="mb-6 p-4 border border-error bg-error-container/20 text-error font-data-sm text-center">
+      <div th:if="${erro}" class="mb-8 p-4 border border-error bg-error-container/20 text-error font-data-sm text-center uppercase tracking-wider">
         Registration Failed: Email is already associated with an active node.
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         <div class="relative group">
-          <label class="block font-label-caps text-on-surface-variant mb-2 group-focus-within:text-primary">FULL NAME</label>
-          <input name="nome" class="input-minimal w-full py-3 px-2 focus:ring-0" placeholder="John Doe" required="" type="text"/>
+          <label class="block font-label-caps text-[11px] text-on-surface-variant mb-2 group-focus-within:text-primary transition-colors tracking-widest" for="fullName">Full Name</label>
+          <input class="input-minimal w-full py-3 px-2 font-data-lg focus:ring-0" id="fullName" name="nome" placeholder="John Doe" required="" type="text"/>
         </div>
         <div class="relative group">
-          <label class="block font-label-caps text-on-surface-variant mb-2 group-focus-within:text-primary">SECURE EMAIL</label>
-          <input name="email" class="input-minimal w-full py-3 px-2 focus:ring-0" placeholder="investor@domain.com" required="" type="email"/>
+          <label class="block font-label-caps text-[11px] text-on-surface-variant mb-2 group-focus-within:text-primary transition-colors tracking-widest" for="email">Secure Email</label>
+          <input class="input-minimal w-full py-3 px-2 font-data-lg focus:ring-0" id="email" name="email" placeholder="investor@domain.com" required="" type="email"/>
         </div>
       </div>
 
-      <div class="mb-10 relative group">
-        <label class="block font-label-caps text-on-surface-variant mb-2 group-focus-within:text-primary">ACCESS KEY (PASSWORD)</label>
+      <div class="mb-12 relative group">
+        <label class="block font-label-caps text-[11px] text-on-surface-variant mb-2 group-focus-within:text-primary transition-colors tracking-widest" for="password">Access Key (Password)</label>
         <div class="relative">
-          <input name="senha" class="input-minimal w-full py-3 px-2 focus:ring-0" placeholder="••••••••••••" required="" type="password"/>
+          <input class="input-minimal w-full py-3 px-2 font-data-lg focus:ring-0 pr-10" id="password" name="senha" placeholder="••••••••••••" required="" type="password"/>
+          <span class="material-symbols-outlined absolute right-2 top-3 text-on-surface-variant cursor-pointer hover:text-primary transition-colors">visibility</span>
         </div>
+        <p class="mt-3 font-data-sm text-[12px] text-outline-variant">Minimum 12 characters, requiring cryptographic complexity.</p>
       </div>
 
-      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-outline-variant">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pt-8 border-t border-outline-variant">
         <label class="flex items-start gap-3 cursor-pointer group">
-          <input class="form-checkbox rounded-[0] mt-1 w-5 h-5 text-primary border-outline-variant bg-transparent" required="" type="checkbox"/>
-          <span class="font-data-sm text-on-surface-variant max-w-xs group-hover:text-on-surface">I acknowledge the Terms of Service.</span>
+          <input class="form-checkbox rounded-[0] mt-1 w-5 h-5 text-primary focus:ring-0 cursor-pointer" required="" type="checkbox"/>
+          <span class="font-data-sm text-[12px] text-on-surface-variant max-w-xs leading-relaxed group-hover:text-on-surface transition-colors">
+                        I acknowledge the <a class="text-primary hover:underline" href="#">Terms of Service</a> and confirm my regulatory status.
+                    </span>
         </label>
-        <button class="w-full md:w-auto bg-primary text-on-primary font-label-caps py-4 px-8 tracking-widest hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2" type="submit">
-          INITIALIZE
+        <button class="w-full md:w-auto bg-primary text-on-primary font-label-caps py-4 px-10 tracking-[0.2em] hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-3" type="submit">
+          Initialize
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
       </div>
     </form>
 
     <div class="mt-8 text-center">
-      <p class="font-data-sm text-on-surface-variant">
-        Already authenticated? <a th:href="@{/login}" class="text-primary hover:underline">Establish Connection</a>
+      <p class="font-data-sm text-[12px] text-on-surface-variant uppercase tracking-widest">
+        Already authenticated?
+        <a th:href="@{/login}" class="text-primary hover:underline ml-2">Establish Connection</a>
       </p>
     </div>
   </div>
