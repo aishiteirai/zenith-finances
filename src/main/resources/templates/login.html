@@ -3,10 +3,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Zenith | Nome da Pagina</title>
+    <title>Zenith | Authentication</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
     <script th:src="@{/js/tailwind-config.js}"></script>
 
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -35,7 +34,7 @@
         <form th:action="@{/login}" method="POST" class="space-y-8 relative z-10">
 
             <div th:if="${param.error}" class="text-error text-data-sm font-data-sm text-center mb-4 bg-error-container/20 p-2 border border-error/50 rounded">
-                Acesso Negado: Credenciais Inválidas.
+                Acesso Negado: Credenciais Inválidas ou Inexistentes.
             </div>
 
             <div th:if="${param.logout}" class="text-primary text-data-sm font-data-sm text-center mb-4 bg-primary-container/20 p-2 border border-primary/50 rounded">
@@ -43,14 +42,14 @@
             </div>
 
             <div th:if="${param.registered}" class="text-primary text-data-sm font-data-sm text-center mb-4 bg-primary-container/20 p-2 border border-primary/50 rounded">
-                Node Inicializado. Inicie sessão agora.
+                Node Inicializado com Sucesso. Inicie sua sessão agora.
             </div>
 
             <div class="space-y-2">
-                <label class="font-data-sm text-data-sm text-on-surface-variant uppercase tracking-wider block" for="email">Network Identifier</label>
+                <label class="font-data-sm text-data-sm text-on-surface-variant uppercase tracking-wider block" for="username">Network Identifier</label>
                 <div class="relative group/input">
                     <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] group-focus-within/input:text-primary-container transition-colors">terminal</span>
-                    <input name="username" class="w-full bg-transparent border border-transparent border-b-outline-variant text-on-surface font-body-md text-body-md py-3 pl-8 pr-3 focus:ring-0 focus:outline-none focus:border-primary-container focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30" id="email" placeholder="admin@zenith.node" required="" type="email"/>
+                    <input name="username" class="w-full bg-transparent border border-transparent border-b-outline-variant text-on-surface font-body-md text-body-md py-3 pl-8 pr-3 focus:ring-0 focus:outline-none focus:border-primary-container focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30" id="username" placeholder="admin@zenith.node" required type="email"/>
                 </div>
             </div>
 
@@ -61,7 +60,8 @@
                 </div>
                 <div class="relative group/input">
                     <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] group-focus-within/input:text-primary-container transition-colors">key</span>
-                    <input name="password" class="w-full bg-transparent border border-transparent border-b-outline-variant text-on-surface font-body-md text-body-md py-3 pl-8 pr-3 focus:ring-0 focus:outline-none focus:border-primary-container focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30 tracking-[0.2em]" id="password" placeholder="••••••••••••" required="" type="password"/>
+                    <input name="password" class="w-full bg-transparent border border-transparent border-b-outline-variant text-on-surface font-body-md text-body-md py-3 pl-8 pr-10 focus:ring-0 focus:outline-none focus:border-primary-container focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30 tracking-[0.2em]" id="password" placeholder="••••••••••••" required type="password"/>
+                    <span id="toggleLoginPasswordIcon" onclick="togglePassword('password', 'toggleLoginPasswordIcon')" class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer hover:text-primary transition-colors select-none">visibility</span>
                 </div>
             </div>
 
@@ -99,5 +99,20 @@
         </div>
     </div>
 </main>
+
+<script>
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+</script>
+
 </body>
 </html>
