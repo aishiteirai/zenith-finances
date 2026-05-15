@@ -1,114 +1,21 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head>
+<html class="dark" lang="en">
+<head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Zenith | Investor Dashboard</title>
-    <!-- Google Fonts & Material Symbols -->
+    <title>Zenith | Nome da Pagina</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script th:src="@{/js/tailwind-config.js}"></script>
+
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Tailwind Configuration (Design System Tokens) -->
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-container": "#1f2020",
-                        "tertiary": "#fbf8f7",
-                        "outline": "#84967c",
-                        "on-secondary-container": "#bab8b7",
-                        "on-primary-fixed": "#002200",
-                        "inverse-on-surface": "#303031",
-                        "error": "#ffb4ab",
-                        "surface-dim": "#121414",
-                        "on-surface-variant": "#b9ccaf",
-                        "inverse-primary": "#026e00",
-                        "secondary": "#c9c6c5",
-                        "on-secondary-fixed-variant": "#474646",
-                        "on-error-container": "#ffdad6",
-                        "background": "#121414",
-                        "surface-bright": "#383939",
-                        "secondary-container": "#4a4949",
-                        "secondary-fixed-dim": "#c9c6c5",
-                        "on-secondary-fixed": "#1c1b1b",
-                        "on-background": "#e3e2e2",
-                        "on-primary": "#013a00",
-                        "on-error": "#690005",
-                        "primary-fixed": "#77ff61",
-                        "surface-tint": "#02e600",
-                        "surface-container-highest": "#343535",
-                        "on-tertiary-fixed-variant": "#474746",
-                        "error-container": "#93000a",
-                        "on-primary-fixed-variant": "#015300",
-                        "surface-container-high": "#292a2a",
-                        "on-surface": "#e3e2e2",
-                        "primary-fixed-dim": "#02e600",
-                        "primary": "#eaffde",
-                        "tertiary-container": "#dedbdb",
-                        "surface-container-low": "#1b1c1c",
-                        "surface-variant": "#343535",
-                        "on-tertiary-fixed": "#1c1b1b",
-                        "inverse-surface": "#e3e2e2",
-                        "secondary-fixed": "#e5e2e1",
-                        "outline-variant": "#3b4b35",
-                        "primary-container": "#00ff00",
-                        "tertiary-fixed": "#e5e2e1",
-                        "on-secondary": "#313030",
-                        "on-primary-container": "#027100",
-                        "tertiary-fixed-dim": "#c8c6c5",
-                        "surface": "#121414",
-                        "surface-container-lowest": "#0d0e0f",
-                        "on-tertiary": "#313030",
-                        "on-tertiary-container": "#616060"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "gutter": "24px",
-                        "base": "8px",
-                        "margin-desktop": "40px",
-                        "margin-mobile": "16px",
-                        "container-max": "1440px"
-                    },
-                    "fontFamily": {
-                        "headline-lg-mobile": ["Inter"],
-                        "display-lg": ["Inter"],
-                        "body-md": ["Inter"],
-                        "data-sm": ["JetBrains Mono"],
-                        "data-lg": ["JetBrains Mono"],
-                        "headline-lg": ["Inter"],
-                        "label-caps": ["Inter"]
-                    },
-                    "fontSize": {
-                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
-                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                        "data-sm": ["12px", { "lineHeight": "1.0", "fontWeight": "400" }],
-                        "data-lg": ["20px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500" }],
-                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
-                        "label-caps": ["11px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700" }]
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Base terminal grid background pattern */
-        .bg-terminal-grid {
-            background-image: linear-gradient(to right, rgba(119,255,97,0.03) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(119,255,97,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md antialiased relative min-h-screen selection:bg-primary selection:text-on-primary-fixed overflow-x-hidden">
 <!-- Global Terminal Grid Background Overlay -->

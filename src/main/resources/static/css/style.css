@@ -1,0 +1,62 @@
+/* Base e Resets */
+body { background-color: #121414; color: #e3e2e2; }
+
+/* Fontes do Google Material */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Componentes Zenith */
+.glass-panel {
+    background: rgba(18, 20, 20, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid #1A1A1A;
+}
+.glass-panel:hover {
+    border-color: #eaffde;
+    box-shadow: 0 0 20px rgba(119,255,97,0.15);
+}
+
+/* Backgrounds / Patterns */
+.tech-grid {
+    background-size: 40px 40px;
+    background-image:
+            linear-gradient(to right, rgba(132, 150, 124, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(132, 150, 124, 0.05) 1px, transparent 1px);
+}
+.bg-terminal-grid {
+    background-image: linear-gradient(to right, rgba(119,255,97,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(119,255,97,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Customização de Inputs (Anulando padrões do navegador) */
+.input-minimal {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #3b4b35 !important;
+    color: #e3e2e2 !important;
+    border-radius: 0 !important;
+    font-size: 16px !important;
+}
+.input-minimal:focus {
+    outline: none !important;
+    border-bottom: 1px solid #77ff61 !important;
+    box-shadow: none !important;
+}
+
+/* Correção Autofill Chrome */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #121414 inset !important;
+    -webkit-text-fill-color: #e3e2e2 !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: #eaffde;
+}
+
+/* Ocultar scrollbar (Dashboard) */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

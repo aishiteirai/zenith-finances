@@ -3,45 +3,18 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Zenith | Command Center</title>
+  <title>Zenith | Nome da Pagina</title>
+
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script th:src="@{/js/tailwind-config.js}"></script>
+
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
-    body { background-color: #121414; }
-  </style>
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          "colors": {
-            "primary": "#eaffde",
-            "primary-container": "#00ff00",
-            "on-primary-container": "#027100",
-            "background": "#121414",
-            "surface": "#121414",
-            "on-surface": "#e3e2e2",
-            "on-surface-variant": "#b9ccaf",
-            "outline-variant": "#3b4b35",
-            "surface-container-low": "#1b1c1c",
-            "surface-container-lowest": "#0d0e0f",
-            "primary-fixed": "#77ff61"
-          },
-          "fontFamily": {
-            "headline-lg": ["Inter"],
-            "display-lg": ["Inter"],
-            "data-lg": ["JetBrains Mono"],
-            "body-md": ["Inter"],
-            "data-sm": ["JetBrains Mono"]
-          }
-        }
-      }
-    }
-  </script>
+
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary selection:text-on-primary">
 
@@ -81,7 +54,7 @@
       </div>
 
       <div class="lg:col-span-6 relative h-[400px] lg:h-[600px] border border-outline-variant bg-surface-container-low/50 backdrop-blur-sm group overflow-hidden">
-        <img th:src="@{/static.images/Imagem-Zenith_index.png}"
+        <img th:src="@{/images/Imagem-Zenith_index.png}"
              alt="Futuristic data visualization"
              class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-screen group-hover:opacity-50 transition-opacity duration-700 grayscale"/>
 
