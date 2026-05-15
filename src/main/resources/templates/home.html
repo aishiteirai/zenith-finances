@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en">
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Zenith | Nome da Pagina</title>
+    <title>Zenith | Centro de Comando</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
     <script th:src="@{/js/tailwind-config.js}"></script>
 
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -17,211 +15,188 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md text-body-md antialiased relative min-h-screen selection:bg-primary selection:text-on-primary-fixed overflow-x-hidden">
-<!-- Global Terminal Grid Background Overlay -->
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased relative min-h-screen selection:bg-primary selection:text-on-primary-fixed overflow-x-hidden">
 <div class="fixed inset-0 pointer-events-none bg-terminal-grid z-0"></div>
-<!-- Background Ambient Glow -->
 <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary-fixed/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-<!-- Shared Component: TopNavBar -->
+
 <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant shadow-[0_0_20px_rgba(119,255,97,0.15)]">
-    <div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto">
-        <!-- Brand -->
-        <div class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter cursor-pointer flex items-center gap-2">
+    <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
+        <div class="font-headline-lg text-[24px] font-bold text-primary tracking-tighter flex items-center gap-2">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
             Zenith
         </div>
-        <!-- Navigation Links (Web) -->
         <nav class="hidden md:flex gap-8">
-            <a class="text-primary font-body-md text-body-md transition-colors duration-200" href="#">Dashboard</a>
-            <a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-200" href="#">Carteiras</a>
-            <a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-200" href="#">Relatórios</a>
+            <a class="text-primary border-b-2 border-primary pb-1 uppercase tracking-widest text-xs font-data-sm" href="#">Dashboard</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase tracking-widest text-xs font-data-sm" href="#">Carteiras</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 uppercase tracking-widest text-xs font-data-sm" href="#">Relatórios</a>
         </nav>
-        <!-- Actions -->
         <div class="flex items-center gap-4">
-            <button class="hidden md:block font-label-caps text-label-caps uppercase text-secondary hover:text-primary transition-colors duration-200 tracking-[0.1em]">
-                Perfil
+            <button class="hidden md:block font-label-caps text-xs uppercase text-secondary hover:text-primary transition-colors duration-200 tracking-widest flex items-center gap-1">
+                <span class="material-symbols-outlined text-[18px]">person</span> Perfil
             </button>
-            <button class="border border-outline-variant text-secondary font-label-caps text-label-caps uppercase px-6 py-2.5 rounded-none hover:border-primary hover:text-primary transition-colors active:scale-95 duration-200 tracking-[0.1em]">
-                Sair
-            </button>
+            <form th:action="@{/logout}" method="post" class="m-0 p-0 inline">
+                <button type="submit" class="border border-outline-variant text-secondary font-label-caps text-xs uppercase px-6 py-2 rounded-none hover:border-primary hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,0,0.1)] transition-all duration-200 tracking-[0.1em] flex items-center gap-2">
+                    Sair <span class="material-symbols-outlined text-[16px]">logout</span>
+                </button>
+            </form>
         </div>
     </div>
 </header>
-<!-- Main Canvas -->
+
 <main class="relative z-10 pt-[120px] pb-24">
-    <!-- Hero Section / Greeting -->
-    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 flex flex-col md:flex-row items-start md:items-center justify-between relative gap-6">
+    <section class="max-w-7xl mx-auto px-8 py-8 flex flex-col md:flex-row items-start md:items-center justify-between relative gap-6">
         <div>
-            <div class="font-data-sm text-data-sm text-primary-fixed mb-2 flex items-center gap-2 opacity-80">
+            <div class="font-data-sm text-xs text-primary-fixed mb-3 flex items-center gap-2 opacity-80">
                 <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                <span>session.active(user="[Nome do Investidor]");</span>
+                <span th:text="'session.active(user=&quot;' + (${username} != null ? ${username} : 'Investidor') + '&quot;);'">session.active(user="Investidor");</span>
                 <span class="animate-pulse w-2 h-4 bg-primary-fixed inline-block"></span>
             </div>
-            <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-on-surface to-secondary">
-                Bem-vindo, [Nome]
+            <h1 class="font-display-lg text-4xl text-on-surface tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-on-surface to-secondary">
+                Bem-vindo ao Centro de Comando
             </h1>
         </div>
-        <button class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps uppercase px-8 py-4 rounded-none hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(119,255,97,0.3)] tracking-[0.1em]">
+        <button class="bg-primary-fixed text-on-primary-fixed font-label-caps text-sm uppercase px-8 py-4 rounded-none hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(119,255,97,0.3)] tracking-[0.1em]">
             <span class="material-symbols-outlined text-[18px]">add</span>
             Nova Carteira
         </button>
     </section>
-    <!-- Live Market Pulse (Ticker Strip) -->
+
     <section class="border-t border-b border-outline-variant bg-surface/40 backdrop-blur-md py-3 overflow-hidden mb-12">
-        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center gap-8 whitespace-nowrap overflow-x-auto hide-scrollbar">
+        <div class="max-w-7xl mx-auto px-8 flex items-center gap-8 whitespace-nowrap overflow-x-auto hide-scrollbar">
             <div class="flex items-center gap-2 border-r border-outline-variant pr-8 shrink-0">
                 <span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse shadow-[0_0_8px_rgba(119,255,97,0.8)]"></span>
-                <span class="font-data-sm text-data-sm text-primary-fixed tracking-widest uppercase">System Status: Optimal</span>
+                <span class="font-data-sm text-xs text-primary-fixed tracking-widest uppercase">Status do Sistema: Ideal</span>
             </div>
-            <!-- Mock Tickers -->
-            <div class="flex items-center gap-8 font-data-sm text-data-sm">
+            <div class="flex items-center gap-8 font-data-sm text-sm">
                 <div class="flex items-center gap-3">
                     <span class="text-secondary">ZTH/BRL</span>
                     <span class="text-on-surface">6.450,89</span>
-                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_up</span> 2.4%</span>
+                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_up</span> 2.4%</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="text-secondary">BTC/BRL</span>
-                    <span class="text-on-surface">334.001,20</span>
-                    <span class="text-error flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_down</span> 0.8%</span>
+                    <span class="text-on-surface">364.001,20</span>
+                    <span class="text-error flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span> 0.8%</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="text-secondary">ETH/BRL</span>
                     <span class="text-on-surface">18.159,44</span>
-                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_up</span> 1.1%</span>
+                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_up</span> 1.1%</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="text-secondary">SOL/BRL</span>
-                    <span class="text-on-surface">758,16</span>
-                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_drop_up</span> 4.2%</span>
+                    <span class="text-on-surface">858,16</span>
+                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_up</span> 4.2%</span>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Global Summary -->
-    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-12">
-        <div class="border border-outline-variant bg-surface/10 backdrop-blur-xl p-8 relative overflow-hidden rounded-none">
+
+    <section class="max-w-7xl mx-auto px-8 mb-12">
+        <div class="glass-panel p-8 relative overflow-hidden rounded-none border border-outline-variant">
             <div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/5 rounded-full blur-[80px] pointer-events-none"></div>
-            <div class="flex items-center gap-2 mb-6">
+            <div class="flex items-center gap-2 mb-8">
                 <span class="material-symbols-outlined text-secondary">monitoring</span>
-                <h2 class="font-data-lg text-data-lg text-on-surface uppercase tracking-widest text-secondary">Resumo Global</h2>
+                <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary">Resumo Global</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Total Equity -->
                 <div class="border-l-2 border-primary-fixed pl-6">
-                    <p class="font-data-sm text-data-sm text-secondary mb-2">[ PATRIMÔNIO_TOTAL ]</p>
-                    <p class="font-headline-lg text-headline-lg text-primary-fixed tracking-tight">R$ 150.420,00</p>
+                    <p class="font-data-sm text-xs text-secondary mb-2 tracking-widest">[ PATRIMÔNIO_TOTAL ]</p>
+                    <p class="font-data-lg text-3xl text-primary-fixed tracking-tight">R$ 150.420,00</p>
                 </div>
-                <!-- Available Balance -->
                 <div class="border-l border-outline-variant pl-6">
-                    <p class="font-data-sm text-data-sm text-secondary mb-2">[ SALDO_DISPONÍVEL ]</p>
-                    <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">R$ 20.000,00</p>
+                    <p class="font-data-sm text-xs text-secondary mb-2 tracking-widest">[ SALDO_DISPONÍVEL ]</p>
+                    <p class="font-data-lg text-2xl text-on-surface tracking-tight">R$ 20.000,00</p>
                 </div>
-                <!-- Invested Value -->
                 <div class="border-l border-outline-variant pl-6">
-                    <p class="font-data-sm text-data-sm text-secondary mb-2">[ VALOR_INVESTIDO ]</p>
-                    <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">R$ 130.420,00</p>
+                    <p class="font-data-sm text-xs text-secondary mb-2 tracking-widest">[ VALOR_INVESTIDO ]</p>
+                    <p class="font-data-lg text-2xl text-on-surface tracking-tight">R$ 130.420,00</p>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Wallets List -->
-    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-24">
+
+    <section class="max-w-7xl mx-auto px-8 mb-24">
         <div class="flex items-center gap-2 mb-8">
             <span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
-            <h2 class="font-data-lg text-data-lg text-on-surface uppercase tracking-widest text-secondary">Lista de Carteiras</h2>
+            <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary">Lista de Carteiras</h2>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            <!-- Card 1 -->
-            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden rounded-none flex flex-col justify-between cursor-pointer">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="group glass-panel p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
                 <div class="flex justify-between items-start mb-6">
-                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Carteira Principal</h3>
+                    <h3 class="font-headline-lg text-lg text-on-surface tracking-wide">Carteira Principal</h3>
                     <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">arrow_outward</span>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <p class="font-data-sm text-data-sm text-secondary mb-1">Criação:</p>
-                        <p class="font-data-sm text-data-sm text-on-surface">12/05/2023</p>
+                        <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Criação:</p>
+                        <p class="font-data-sm text-sm text-on-surface">12/05/2023</p>
                     </div>
                     <div>
-                        <p class="font-data-sm text-data-sm text-secondary mb-1">Saldo Disponível:</p>
-                        <p class="font-data-lg text-data-lg text-primary-fixed">R$ 15.000,00</p>
+                        <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Saldo Disponível:</p>
+                        <p class="font-data-lg text-xl text-primary-fixed">R$ 15.000,00</p>
                     </div>
                 </div>
-                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-data-sm text-outline group-hover:text-primary transition-colors flex items-center gap-2">
+                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-xs text-secondary group-hover:text-primary transition-colors flex items-center gap-2">
                     <span>[ ID: WLT-8932A ]</span>
                 </div>
             </div>
-            <!-- Card 2 -->
-            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden rounded-none flex flex-col justify-between cursor-pointer">
+
+            <div class="group glass-panel p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
                 <div class="flex justify-between items-start mb-6">
-                    <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Fundo de Emergência</h3>
+                    <h3 class="font-headline-lg text-lg text-on-surface tracking-wide">Fundo de Emergência</h3>
                     <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">arrow_outward</span>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <p class="font-data-sm text-data-sm text-secondary mb-1">Criação:</p>
-                        <p class="font-data-sm text-data-sm text-on-surface">24/08/2023</p>
+                        <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Criação:</p>
+                        <p class="font-data-sm text-sm text-on-surface">24/08/2023</p>
                     </div>
                     <div>
-                        <p class="font-data-sm text-data-sm text-secondary mb-1">Saldo Disponível:</p>
-                        <p class="font-data-lg text-data-lg text-primary-fixed">R$ 5.000,00</p>
+                        <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Saldo Disponível:</p>
+                        <p class="font-data-lg text-xl text-primary-fixed">R$ 5.000,00</p>
                     </div>
                 </div>
-                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-data-sm text-outline group-hover:text-primary transition-colors flex items-center gap-2">
+                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-xs text-secondary group-hover:text-primary transition-colors flex items-center gap-2">
                     <span>[ ID: WLT-2144B ]</span>
                 </div>
             </div>
-            <!-- Card 3 -->
-            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden rounded-none flex flex-col justify-between cursor-pointer border-dashed hover:border-solid flex items-center justify-center text-center">
-                <span class="material-symbols-outlined text-[48px] text-outline mb-4 group-hover:text-primary transition-colors">add_circle</span>
-                <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">Criar Nova Carteira</h3>
-                <p class="font-data-sm text-data-sm text-secondary">Inicialize um novo container de ativos.</p>
+
+            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col items-center justify-center text-center cursor-pointer border-dashed hover:border-solid">
+                <span class="material-symbols-outlined text-[48px] text-outline-variant mb-4 group-hover:text-primary transition-colors">add_circle</span>
+                <h3 class="font-headline-lg text-lg text-on-surface mb-2">Criar Nova Carteira</h3>
+                <p class="font-data-sm text-xs text-secondary leading-relaxed">Inicialize um novo contêiner de ativos.</p>
             </div>
         </div>
     </section>
 </main>
-<!-- Shared Component: Footer -->
-<footer class="bg-surface-container-lowest w-full py-12 border-t border-outline-variant relative z-10">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
-        <!-- Brand Column -->
+
+<footer class="bg-surface-container-lowest border-t border-outline-variant w-full py-12 relative z-10">
+    <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div class="flex flex-col gap-4">
-            <div class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+            <div class="font-headline-lg text-xl text-primary flex items-center gap-2">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
                 Zenith
             </div>
-            <p class="font-data-sm text-data-sm text-on-surface-variant max-w-xs mt-2">
-                High-velocity data processing and financial sovereignty infrastructure.
+            <p class="font-data-sm text-xs text-on-surface-variant leading-relaxed pr-4">
+                Processamento de dados de alta velocidade e infraestrutura de soberania financeira.
             </p>
         </div>
-        <!-- Links Column -->
         <div class="flex flex-col gap-3">
-            <span class="font-label-caps text-label-caps text-secondary mb-2 tracking-widest uppercase">Legal</span>
-            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Privacy Policy</a>
-            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Terms of Service</a>
-            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Cookie Policy</a>
-            <a class="font-data-sm text-data-sm text-on-surface-variant hover:text-primary-fixed transition-colors hover:opacity-80" href="#">Regulatory Disclosures</a>
+            <span class="font-data-sm text-xs text-secondary mb-2 tracking-widest uppercase">Legal</span>
+            <a class="font-data-sm text-xs text-on-surface-variant hover:text-primary transition-colors uppercase tracking-wider" href="#">Política de Privacidade</a>
+            <a class="font-data-sm text-xs text-on-surface-variant hover:text-primary transition-colors uppercase tracking-wider" href="#">Termos de Serviço</a>
+            <a class="font-data-sm text-xs text-on-surface-variant hover:text-primary transition-colors uppercase tracking-wider" href="#">Avisos Regulatórios</a>
         </div>
-        <!-- Empty Column for Grid Alignment -->
         <div class="hidden md:block"></div>
-        <!-- Copyright Column -->
         <div class="flex items-end justify-start md:justify-end">
-            <p class="font-data-sm text-data-sm text-on-surface-variant opacity-60">
-                © 2024 Zenith Financial Sovereignty. All rights reserved.
+            <p class="font-data-sm text-[10px] text-on-surface-variant opacity-60 uppercase tracking-widest text-right">
+                © 2026 Zenith. Todos os direitos reservados.
             </p>
         </div>
     </div>
 </footer>
-<style>
-    /* Hide scrollbar for ticker */
-    .hide-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-    .hide-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-</style>
-</body></html>
+</body>
+</html>

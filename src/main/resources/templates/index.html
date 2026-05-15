@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html class="dark" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Zenith | Nome da Pagina</title>
+  <title>Zenith | Soberania Financeira</title>
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
   <script th:src="@{/js/tailwind-config.js}"></script>
 
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -19,72 +18,78 @@
 <body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary selection:text-on-primary">
 
 <nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant shadow-[0_0_20px_rgba(119,255,97,0.15)] flex justify-between items-center h-20 px-8 max-w-7xl mx-auto left-0 right-0">
-  <div class="font-bold text-primary text-2xl tracking-tighter">Zenith</div>
+  <div class="font-bold text-primary text-2xl tracking-tighter flex items-center gap-2">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+    Zenith
+  </div>
   <ul class="hidden md:flex items-center gap-8 text-sm">
-    <li><a class="text-primary border-b-2 border-primary pb-1" href="#">About</a></li>
-    <li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Products</a></li>
-    <li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a></li>
+    <li><a class="text-primary border-b-2 border-primary pb-1" href="#">Sobre</a></li>
+    <li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Produtos</a></li>
+    <li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Planos</a></li>
   </ul>
-  <div class="hidden md:flex items-center gap-4">
-    <a th:href="@{/login}" class="text-on-surface hover:text-primary transition-colors border border-outline-variant hover:border-primary px-6 py-2">Login</a>
-    <a th:href="@{/register}" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-6 py-2 shadow-[0_0_15px_rgba(0,255,0,0.15)]">Join Now</a>
+  <div class="hidden md:flex items-center gap-4 font-label-caps tracking-widest uppercase">
+    <a th:href="@{/login}" class="text-on-surface hover:text-primary transition-colors border border-outline-variant hover:border-primary px-6 py-2 text-xs">Entrar</a>
+    <a th:href="@{/register}" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-6 py-2 shadow-[0_0_15px_rgba(0,255,0,0.15)] text-xs">Registrar</a>
   </div>
 </nav>
 
-<main class="pt-24 pb-20">
-  <section class="px-8 max-w-7xl mx-auto min-h-[80vh] flex items-center mb-32">
+<main class="pt-24 pb-20 relative">
+  <div class="absolute inset-0 pointer-events-none bg-terminal-grid z-0 opacity-50"></div>
+
+  <section class="px-8 max-w-7xl mx-auto min-h-[80vh] flex items-center mb-32 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 w-full">
       <div class="lg:col-span-6 flex flex-col justify-center z-10">
         <div class="inline-flex items-center gap-2 mb-6">
-          <span class="w-2 h-2 bg-primary-container shadow-[0_0_10px_#00ff00]"></span>
-          <span class="font-mono text-xs text-primary tracking-widest uppercase">System Initialization</span>
+          <span class="w-2 h-2 bg-primary-container shadow-[0_0_10px_#00ff00] animate-pulse"></span>
+          <span class="font-data-sm text-xs text-primary tracking-widest uppercase">Inicialização do Sistema</span>
         </div>
-        <h1 class="text-5xl md:text-6xl font-bold text-on-surface mb-6 leading-tight">
-          Sovereignty <br/>
-          <span class="text-primary">through technology.</span>
+        <h1 class="font-display-lg text-5xl md:text-6xl font-bold text-on-surface mb-6 leading-tight tracking-tight">
+          Soberania <br/>
+          <span class="text-primary">através da tecnologia.</span>
         </h1>
-        <p class="text-on-surface-variant text-lg max-w-lg mb-10">
-          Zenith is a high-velocity command center for sua gestão financeira. Engenharia de precisão para colocar o controlo absoluto nas suas mãos.
+        <p class="text-on-surface-variant text-lg max-w-lg mb-10 leading-relaxed">
+          O Zenith é um centro de comando de alta velocidade para a sua gestão financeira e de investimentos. Engenharia de precisão para colocar o controle absoluto do seu patrimônio nas suas mãos.
         </p>
         <div class="flex gap-4">
-          <a th:href="@{/register}" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-8 py-3 font-bold shadow-[0_0_20px_rgba(0,255,0,0.2)]">
-            Deploy Infrastructure
+          <a th:href="@{/register}" class="bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors px-8 py-4 font-bold shadow-[0_0_20px_rgba(0,255,0,0.2)] font-label-caps uppercase tracking-widest text-sm flex items-center gap-2">
+            Implementar Infraestrutura
+            <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
           </a>
         </div>
       </div>
 
-      <div class="lg:col-span-6 relative h-[400px] lg:h-[600px] border border-outline-variant bg-surface-container-low/50 backdrop-blur-sm group overflow-hidden">
+      <div class="lg:col-span-6 relative h-[400px] lg:h-[600px] border border-outline-variant bg-surface-container-low/50 backdrop-blur-sm group overflow-hidden glass-panel">
         <img th:src="@{/images/Imagem-Zenith_index.png}"
-             alt="Futuristic data visualization"
+             alt="Visualização abstrata de dados"
              class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-screen group-hover:opacity-50 transition-opacity duration-700 grayscale"/>
 
         <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
-        <div class="absolute bottom-4 left-4 font-mono text-xs text-on-surface-variant">
-          > NODE_CONNECTION_ESTABLISHED // 0ms ping
+        <div class="absolute bottom-4 left-4 font-data-sm text-xs text-on-surface-variant flex items-center gap-2">
+          <span class="text-primary">></span> CONEXAO_AO_NODE_ESTABELECIDA // ping: 0ms
         </div>
       </div>
     </div>
   </section>
 
-  <section class="px-8 max-w-7xl mx-auto mb-32">
+  <section class="px-8 max-w-7xl mx-auto mb-32 relative z-10">
     <div class="mb-16 border-b border-outline-variant pb-4">
-      <h2 class="text-3xl font-bold text-on-surface">Execution Protocol</h2>
+      <h2 class="font-headline-lg text-3xl font-bold text-on-surface tracking-tight">Protocolo de Execução</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="border border-outline-variant bg-surface/5 backdrop-blur-xl p-8 hover:border-primary-container hover:shadow-[0_0_30px_rgba(0,255,0,0.05)] transition-all duration-300 relative group">
-        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-6 block group-hover:text-primary">database</span>
-        <h3 class="font-mono text-xl text-on-surface mb-3">Data Ingestion</h3>
-        <p class="text-on-surface-variant">Conecte APIs globais com segurança. O Zenith processa milhões de pontos de dados em tempo real.</p>
+      <div class="glass-panel p-8 hover:border-primary-container transition-all duration-300 relative group">
+        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-6 block group-hover:text-primary transition-colors duration-300">database</span>
+        <h3 class="font-data-lg text-xl text-on-surface mb-3 tracking-wide">Ingestão de Dados</h3>
+        <p class="text-on-surface-variant font-body-md">Conecte fontes e carteiras com segurança. O sistema processa pontos de dados em tempo real para a sua análise financeira.</p>
       </div>
-      <div class="border border-outline-variant bg-surface/5 backdrop-blur-xl p-8 hover:border-primary-container hover:shadow-[0_0_30px_rgba(0,255,0,0.05)] transition-all duration-300 relative group md:mt-12">
-        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-6 block group-hover:text-primary">memory</span>
-        <h3 class="font-mono text-xl text-on-surface mb-3">Algorithmic Processing</h3>
-        <p class="text-on-surface-variant">Redes neurais proprietárias analisam a estrutura do mercado com precisão de máquina.</p>
+      <div class="glass-panel p-8 hover:border-primary-container transition-all duration-300 relative group md:mt-12">
+        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-6 block group-hover:text-primary transition-colors duration-300">memory</span>
+        <h3 class="font-data-lg text-xl text-on-surface mb-3 tracking-wide">Processamento Algorítmico</h3>
+        <p class="text-on-surface-variant font-body-md">Redes neurais proprietárias analisam a estrutura da sua carteira de investimentos com precisão de máquina.</p>
       </div>
-      <div class="border border-outline-variant bg-surface/5 backdrop-blur-xl p-8 hover:border-primary-container hover:shadow-[0_0_30px_rgba(0,255,0,0.05)] transition-all duration-300 relative group md:mt-24">
-        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-6 block group-hover:text-primary">lock</span>
-        <h3 class="font-mono text-xl text-on-surface mb-3">Absolute Sovereignty</h3>
-        <p class="text-on-surface-variant">Retenha o controlo total. O Zenith atua apenas sob as suas assinaturas criptográficas.</p>
+      <div class="glass-panel p-8 hover:border-primary-container transition-all duration-300 relative group md:mt-24">
+        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-6 block group-hover:text-primary transition-colors duration-300">lock</span>
+        <h3 class="font-data-lg text-xl text-on-surface mb-3 tracking-wide">Soberania Absoluta</h3>
+        <p class="text-on-surface-variant font-body-md">Retenha o controle total. O Zenith atua exclusivamente sob as suas assinaturas e diretrizes de segurança.</p>
       </div>
     </div>
   </section>
@@ -93,12 +98,15 @@
 <footer class="bg-surface-container-lowest border-t border-outline-variant w-full py-12 px-8">
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
     <div>
-      <div class="text-primary font-bold text-2xl mb-2">Zenith</div>
-      <p class="font-mono text-xs text-on-surface-variant">© 2026 Zenith Financial Sovereignty. All rights reserved.</p>
+      <div class="text-primary font-bold text-2xl mb-2 flex items-center gap-2">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+        Zenith
+      </div>
+      <p class="font-data-sm text-xs text-on-surface-variant">© 2026 Zenith Financial Sovereignty. Todos os direitos reservados.</p>
     </div>
-    <div class="flex flex-wrap gap-8 text-xs font-mono text-on-surface-variant uppercase tracking-widest">
-      <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-      <a class="hover:text-primary" href="#">Terms of Service</a>
+    <div class="flex flex-wrap gap-8 text-xs font-data-sm text-on-surface-variant uppercase tracking-widest">
+      <a class="hover:text-primary transition-colors" href="#">Política de Privacidade</a>
+      <a class="hover:text-primary" href="#">Termos de Serviço</a>
     </div>
   </div>
 </footer>

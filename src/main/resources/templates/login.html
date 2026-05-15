@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Zenith | Authentication</title>
+    <title>Zenith | Autenticação de Node</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
@@ -20,80 +20,82 @@
 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-container opacity-[0.03] rounded-full blur-[120px] pointer-events-none z-0"></div>
 
 <main class="w-full max-w-md px-margin-mobile md:px-0 relative z-10">
-    <div class="glass-panel border border-outline-variant p-8 md:p-12 relative group transition-colors duration-500 hover:border-primary-container/50">
+    <div class="glass-panel p-8 md:p-12 relative group transition-colors duration-500 hover:border-primary-container/50">
         <div class="absolute inset-0 bg-gradient-to-b from-primary-container/0 to-primary-container/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
         <div class="text-center mb-12 relative z-10">
-            <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">Zenith</h1>
+            <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase flex justify-center items-center gap-2">
+                <span class="material-symbols-outlined text-[32px]">terminal</span> Zenith
+            </h1>
             <div class="font-data-sm text-data-sm text-on-surface-variant mt-3 tracking-[0.2em] uppercase flex items-center justify-center gap-2">
                 <span class="w-2 h-2 bg-primary-container rounded-full animate-pulse shadow-[0_0_8px_#00ff00]"></span>
-                Terminal Access
+                Acesso ao Terminal
             </div>
         </div>
 
         <form th:action="@{/login}" method="POST" class="space-y-8 relative z-10">
 
-            <div th:if="${param.error}" class="text-error text-data-sm font-data-sm text-center mb-4 bg-error-container/20 p-2 border border-error/50 rounded">
+            <div th:if="${param.error}" class="text-error font-data-sm text-center mb-4 bg-error-container/20 p-3 border border-error/50 text-xs tracking-widest uppercase">
                 Acesso Negado: Credenciais Inválidas ou Inexistentes.
             </div>
 
-            <div th:if="${param.logout}" class="text-primary text-data-sm font-data-sm text-center mb-4 bg-primary-container/20 p-2 border border-primary/50 rounded">
+            <div th:if="${param.logout}" class="text-primary font-data-sm text-center mb-4 bg-primary-container/20 p-3 border border-primary/50 text-xs tracking-widest uppercase">
                 Sessão encerrada com segurança.
             </div>
 
-            <div th:if="${param.registered}" class="text-primary text-data-sm font-data-sm text-center mb-4 bg-primary-container/20 p-2 border border-primary/50 rounded">
-                Node Inicializado com Sucesso. Inicie sua sessão agora.
+            <div th:if="${param.registered}" class="text-primary font-data-sm text-center mb-4 bg-primary-container/20 p-3 border border-primary/50 text-xs tracking-widest uppercase">
+                Node Inicializado. Inicie a sua sessão agora.
             </div>
 
             <div class="space-y-2">
-                <label class="font-data-sm text-data-sm text-on-surface-variant uppercase tracking-wider block" for="username">Network Identifier</label>
+                <label class="font-data-sm text-xs text-on-surface-variant uppercase tracking-wider block" for="username">Identificador de Rede (E-mail)</label>
                 <div class="relative group/input">
-                    <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] group-focus-within/input:text-primary-container transition-colors">terminal</span>
-                    <input name="username" class="w-full bg-transparent border border-transparent border-b-outline-variant text-on-surface font-body-md text-body-md py-3 pl-8 pr-3 focus:ring-0 focus:outline-none focus:border-primary-container focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30" id="username" placeholder="admin@zenith.node" required type="email"/>
+                    <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] group-focus-within/input:text-primary transition-colors">account_circle</span>
+                    <input name="username" class="input-minimal w-full pl-8 py-3 focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30 font-data-sm" id="username" placeholder="investidor@zenith.node" required type="email"/>
                 </div>
             </div>
 
             <div class="space-y-2">
                 <div class="flex justify-between items-center">
-                    <label class="font-data-sm text-data-sm text-on-surface-variant uppercase tracking-wider block" for="password">Security Protocol</label>
-                    <a class="font-data-sm text-data-sm text-primary hover:text-primary-fixed-dim transition-colors tracking-wide" href="#">Bypass</a>
+                    <label class="font-data-sm text-xs text-on-surface-variant uppercase tracking-wider block" for="password">Protocolo de Segurança (Senha)</label>
+                    <a class="font-data-sm text-xs text-primary hover:text-primary-fixed-dim transition-colors tracking-wide uppercase" href="#">Ignorar (Recuperar)</a>
                 </div>
                 <div class="relative group/input">
-                    <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] group-focus-within/input:text-primary-container transition-colors">key</span>
-                    <input name="password" class="w-full bg-transparent border border-transparent border-b-outline-variant text-on-surface font-body-md text-body-md py-3 pl-8 pr-10 focus:ring-0 focus:outline-none focus:border-primary-container focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30 tracking-[0.2em]" id="password" placeholder="••••••••••••" required type="password"/>
+                    <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] group-focus-within/input:text-primary transition-colors">key</span>
+                    <input name="password" class="input-minimal w-full pl-8 pr-10 py-3 focus:bg-surface-container-high transition-all placeholder:text-on-surface-variant/30 font-data-sm tracking-[0.2em]" id="password" placeholder="••••••••••••" required type="password"/>
                     <span id="toggleLoginPasswordIcon" onclick="togglePassword('password', 'toggleLoginPasswordIcon')" class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer hover:text-primary transition-colors select-none">visibility</span>
                 </div>
             </div>
 
             <div class="pt-4">
-                <button class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-4 tracking-[0.15em] hover:bg-primary-fixed-dim transition-colors uppercase flex items-center justify-center gap-3 border border-primary-container" type="submit">
-                    Initialize Session
-                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                <button class="w-full bg-primary-container text-on-primary-container font-label-caps text-sm py-4 tracking-[0.15em] hover:bg-primary-fixed-dim transition-colors uppercase flex items-center justify-center gap-3 border border-primary-container" type="submit">
+                    Inicializar Sessão
+                    <span class="material-symbols-outlined text-[18px]">login</span>
                 </button>
             </div>
         </form>
 
         <div class="my-8 flex items-center gap-4 relative z-10 opacity-70">
             <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-outline-variant"></div>
-            <span class="font-data-sm text-data-sm text-on-surface-variant uppercase tracking-widest">External Node</span>
+            <span class="font-data-sm text-xs text-on-surface-variant uppercase tracking-widest">Node Externo</span>
             <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-outline-variant"></div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 relative z-10">
-            <button class="border border-outline-variant bg-transparent text-on-surface hover:border-primary-container hover:text-primary-container hover:shadow-[0_0_15px_rgba(0,255,0,0.1)] font-label-caps text-label-caps py-3 transition-all flex items-center justify-center gap-2 uppercase tracking-widest" type="button">
+            <button class="glass-panel text-on-surface hover:border-primary-container hover:text-primary font-label-caps text-xs py-3 transition-all flex items-center justify-center gap-2 uppercase tracking-widest" type="button">
                 Google
             </button>
-            <button class="border border-outline-variant bg-transparent text-on-surface hover:border-primary-container hover:text-primary-container hover:shadow-[0_0_15px_rgba(0,255,0,0.1)] font-label-caps text-label-caps py-3 transition-all flex items-center justify-center gap-2 uppercase tracking-widest" type="button">
+            <button class="glass-panel text-on-surface hover:border-primary-container hover:text-primary font-label-caps text-xs py-3 transition-all flex items-center justify-center gap-2 uppercase tracking-widest" type="button">
                 Apple
             </button>
         </div>
 
         <div class="mt-8 pt-8 border-t border-outline-variant/50 relative z-10">
-            <p class="text-center font-data-sm text-data-sm text-on-surface-variant mb-4 uppercase tracking-widest">
-                Unregistered connection?
+            <p class="text-center font-data-sm text-xs text-on-surface-variant mb-4 uppercase tracking-widest">
+                Conexão não registrada?
             </p>
-            <a th:href="@{/register}" class="w-full bg-transparent text-primary font-label-caps text-label-caps py-4 tracking-[0.15em] hover:bg-primary/5 transition-all uppercase flex items-center justify-center gap-3 border border-primary/50 hover:border-primary shadow-[0_0_10px_rgba(0,255,0,0.05)] hover:shadow-[0_0_15px_rgba(0,255,0,0.15)]">
-                Request Node Access
+            <a th:href="@{/register}" class="w-full bg-transparent text-primary font-label-caps text-sm py-4 tracking-[0.15em] hover:bg-primary/5 transition-all uppercase flex items-center justify-center gap-3 border border-primary/50 hover:border-primary shadow-[0_0_10px_rgba(0,255,0,0.05)] hover:shadow-[0_0_15px_rgba(0,255,0,0.15)]">
+                Solicitar Acesso ao Node
                 <span class="material-symbols-outlined text-[18px]">person_add</span>
             </a>
         </div>
