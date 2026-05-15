@@ -21,7 +21,6 @@ class InvestidorRepositoryTest {
 
     @Test
     void deveEncontrarInvestidorPorEmail() {
-        // Arrange: Criar e persistir um investidor na base de dados de teste
         Investidor inv = new Investidor();
         inv.setNome("Vitalik");
         inv.setEmail("vitalik@zenith.node");
@@ -29,20 +28,16 @@ class InvestidorRepositoryTest {
         entityManager.persist(inv);
         entityManager.flush();
 
-        // Act
         Optional<Investidor> encontrado = investidorRepository.findByEmail("vitalik@zenith.node");
 
-        // Assert
         assertThat(encontrado).isPresent();
         assertThat(encontrado.get().getNome()).isEqualTo("Vitalik");
     }
 
     @Test
     void deveRetornarVazioSeEmailNaoExistir() {
-        // Act
         Optional<Investidor> encontrado = investidorRepository.findByEmail("inexistente@zenith.node");
 
-        // Assert
         assertThat(encontrado).isEmpty();
     }
 }

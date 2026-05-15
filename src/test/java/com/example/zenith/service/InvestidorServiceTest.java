@@ -41,27 +41,21 @@ class InvestidorServiceTest {
 
     @Test
     void deveRegistrarNovoInvestidorComSucesso() {
-        // Arrange: O repositório não encontra o email (Optional vazio)
         when(investidorRepository.findByEmail(registroDTO.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(registroDTO.getSenha())).thenReturn("hashCriptografado");
 
-        // Act
         boolean sucesso = investidorService.registrarNovoInvestidor(registroDTO);
 
-        // Assert
         assertTrue(sucesso);
         verify(investidorRepository, times(1)).save(any(Investidor.class));
     }
 
     @Test
     void naoDeveRegistrarQuandoEmailJaExiste() {
-        // Arrange: O repositório encontra um investidor existente com este email
         when(investidorRepository.findByEmail(registroDTO.getEmail())).thenReturn(Optional.of(new Investidor()));
 
-        // Act
         boolean sucesso = investidorService.registrarNovoInvestidor(registroDTO);
 
-        // Assert
         assertFalse(sucesso);
         verify(investidorRepository, never()).save(any(Investidor.class));
     }
