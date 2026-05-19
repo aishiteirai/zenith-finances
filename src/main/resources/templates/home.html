@@ -5,6 +5,9 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Zenith | Centro de Comando</title>
 
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/tailwind-config.js}"></script>
 
@@ -78,97 +81,104 @@
                     <span class="text-on-surface">364.001,20</span>
                     <span class="text-error flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_down</span> 0.8%</span>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-secondary">ETH/BRL</span>
-                    <span class="text-on-surface">18.159,44</span>
-                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_up</span> 1.1%</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-secondary">SOL/BRL</span>
-                    <span class="text-on-surface">858,16</span>
-                    <span class="text-primary-fixed flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_drop_up</span> 4.2%</span>
-                </div>
             </div>
         </div>
     </section>
 
     <section class="max-w-7xl mx-auto px-8 mb-12">
-        <div class="glass-panel p-8 relative overflow-hidden rounded-none border border-outline-variant">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/5 rounded-full blur-[80px] pointer-events-none"></div>
-            <div class="flex items-center gap-2 mb-8">
-                <span class="material-symbols-outlined text-secondary">monitoring</span>
-                <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary">Resumo Global</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="border-l-2 border-primary-fixed pl-6">
-                    <p class="font-data-sm text-xs text-secondary mb-2 tracking-widest">[ PATRIMÔNIO_TOTAL ]</p>
-                    <p class="font-data-lg text-3xl text-primary-fixed tracking-tight">R$ 150.420,00</p>
-                </div>
-                <div class="border-l border-outline-variant pl-6">
-                    <p class="font-data-sm text-xs text-secondary mb-2 tracking-widest">[ SALDO_DISPONÍVEL ]</p>
-                    <p class="font-data-lg text-2xl text-on-surface tracking-tight">R$ 20.000,00</p>
-                </div>
-                <div class="border-l border-outline-variant pl-6">
-                    <p class="font-data-sm text-xs text-secondary mb-2 tracking-widest">[ VALOR_INVESTIDO ]</p>
-                    <p class="font-data-lg text-2xl text-on-surface tracking-tight">R$ 130.420,00</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="max-w-7xl mx-auto px-8 mb-24">
         <div class="flex items-center gap-2 mb-8">
             <span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
             <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary">Lista de Carteiras</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="group glass-panel p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer">
+
+            <div th:each="carteira : ${carteiras}" class="group glass-panel p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
                 <div class="flex justify-between items-start mb-6">
-                    <h3 class="font-headline-lg text-lg text-on-surface tracking-wide">Carteira Principal</h3>
+                    <h3 class="font-headline-lg text-lg text-on-surface tracking-wide" th:text="${carteira.nome}">Nome da Carteira</h3>
                     <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">arrow_outward</span>
                 </div>
-                <div class="space-y-4">
+                <div class="space-y-4 relative z-10">
                     <div>
                         <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Criação:</p>
-                        <p class="font-data-sm text-sm text-on-surface">12/05/2023</p>
+                        <p class="font-data-sm text-sm text-on-surface" th:text="${#temporals.format(carteira.dataCriacao, 'dd/MM/yyyy')}">00/00/0000</p>
                     </div>
                     <div>
                         <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Saldo Disponível:</p>
-                        <p class="font-data-lg text-xl text-primary-fixed">R$ 15.000,00</p>
+                        <p class="font-data-lg text-xl text-primary-fixed" th:text="'R$ ' + ${#numbers.formatDecimal(carteira.saldoDisponivel, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</p>
                     </div>
                 </div>
                 <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-xs text-secondary group-hover:text-primary transition-colors flex items-center gap-2">
-                    <span>[ ID: WLT-8932A ]</span>
+                    <span th:text="'[ ID: WLT-' + ${carteira.id} + ' ]'">[ ID: WLT-0 ]</span>
                 </div>
             </div>
 
-            <div class="group glass-panel p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
-                <div class="flex justify-between items-start mb-6">
-                    <h3 class="font-headline-lg text-lg text-on-surface tracking-wide">Fundo de Emergência</h3>
-                    <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">arrow_outward</span>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Criação:</p>
-                        <p class="font-data-sm text-sm text-on-surface">24/08/2023</p>
-                    </div>
-                    <div>
-                        <p class="font-data-sm text-xs text-secondary mb-1 uppercase tracking-widest">Saldo Disponível:</p>
-                        <p class="font-data-lg text-xl text-primary-fixed">R$ 5.000,00</p>
-                    </div>
-                </div>
-                <div class="mt-6 border-t border-outline-variant pt-4 font-data-sm text-xs text-secondary group-hover:text-primary transition-colors flex items-center gap-2">
-                    <span>[ ID: WLT-2144B ]</span>
-                </div>
-            </div>
+            <form th:action="@{/carteiras/nova}" method="POST" class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col items-center justify-center text-center border-dashed hover:border-solid">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <div class="group border border-outline-variant bg-surface/5 backdrop-blur-xl p-6 hover:border-primary transition-colors duration-300 relative overflow-hidden flex flex-col items-center justify-center text-center cursor-pointer border-dashed hover:border-solid">
-                <span class="material-symbols-outlined text-[48px] text-outline-variant mb-4 group-hover:text-primary transition-colors">add_circle</span>
-                <h3 class="font-headline-lg text-lg text-on-surface mb-2">Criar Nova Carteira</h3>
-                <p class="font-data-sm text-xs text-secondary leading-relaxed">Inicialize um novo contêiner de ativos.</p>
-            </div>
+                <span class="material-symbols-outlined text-[32px] text-outline-variant mb-4 group-hover:text-primary transition-colors">add_circle</span>
+
+                <input type="text" name="nome" placeholder="Nome da Carteira" required class="input-minimal w-full text-center font-data-sm mb-4 bg-transparent border-b border-outline-variant focus:border-primary text-on-surface py-2 outline-none" />
+
+                <input type="number" step="0.01" name="saldoInicial" placeholder="Saldo Inicial (R$)" class="input-minimal w-full text-center font-data-sm mb-6 bg-transparent border-b border-outline-variant focus:border-primary text-on-surface py-2 outline-none" />
+
+                <button type="submit" class="bg-primary-container text-on-primary-container font-label-caps text-xs px-6 py-2 hover:bg-primary-fixed transition-colors uppercase tracking-widest w-full">
+                    Inicializar
+                </button>
+            </form>
+
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-8 mb-24">
+        <div class="flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-secondary">swap_horiz</span>
+            <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary">Terminal de Transações</h2>
+        </div>
+
+        <div class="glass-panel p-8 border border-outline-variant relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary-fixed/5 rounded-full blur-[80px] pointer-events-none"></div>
+
+            <form id="formTransacao" class="grid grid-cols-1 md:grid-cols-6 gap-6 items-end relative z-10">
+
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Carteira ID</label>
+                    <select id="txCarteira" class="input-minimal w-full bg-transparent py-2 outline-none font-data-sm text-on-surface" required>
+                        <option value="" disabled selected>Selecione</option>
+                        <option class="bg-surface text-on-surface" th:each="c : ${carteiras}" th:value="${c.id}" th:text="${c.nome}"></option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Ativo ID</label>
+                    <input type="number" id="txAtivo" class="input-minimal w-full bg-transparent py-2 outline-none font-data-sm" required placeholder="Ex: 1"/>
+                </div>
+
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Operação</label>
+                    <select id="txTipo" class="input-minimal w-full bg-transparent py-2 outline-none font-data-sm text-on-surface" required>
+                        <option class="bg-surface text-on-surface" value="COMPRA">COMPRA</option>
+                        <option class="bg-surface text-on-surface" value="VENDA">VENDA</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Quantidade</label>
+                    <input type="number" id="txQtd" class="input-minimal w-full bg-transparent py-2 outline-none font-data-sm" required min="1" placeholder="Ex: 10"/>
+                </div>
+
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Preço Unit. (R$)</label>
+                    <input type="number" step="0.01" id="txPreco" class="input-minimal w-full bg-transparent py-2 outline-none font-data-sm" required min="0.01" placeholder="Ex: 50.00"/>
+                </div>
+
+                <div class="md:col-span-1">
+                    <button type="submit" class="w-full bg-primary-fixed text-on-primary-fixed font-label-caps text-xs px-2 py-3 hover:bg-primary-fixed-dim transition-colors uppercase tracking-widest flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">bolt</span>
+                        Executar
+                    </button>
+                </div>
+            </form>
         </div>
     </section>
 </main>
@@ -198,5 +208,52 @@
         </div>
     </div>
 </footer>
+
+<script>
+    document.getElementById('formTransacao').addEventListener('submit', function(e) {
+        e.preventDefault(); // Impede o recarregamento da página
+
+        // Captura os tokens CSRF gerados pelo Spring Security no cabeçalho
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        // Monta o payload JSON (TransacaoRequestDTO)
+        const payload = {
+            carteiraId: document.getElementById('txCarteira').value,
+            ativoId: document.getElementById('txAtivo').value,
+            tipo: document.getElementById('txTipo').value,
+            quantidade: document.getElementById('txQtd').value,
+            precoUnitario: document.getElementById('txPreco').value
+        };
+
+        // Envia a requisição para a nossa API
+        fetch('/api/transacoes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken // Injeta a proteção de segurança
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+
+                // Analisa a resposta com base no diagrama de sequência
+                if (response.status === 201) {
+                    alert("Ordem de " + payload.tipo + " executada com sucesso!");
+                    window.location.reload(); // Recarrega para atualizar os saldos das carteiras
+                } else if (response.status === 400) {
+                    alert("FALHA NA OPERAÇÃO: " + (data.erro || "Saldo Insuficiente"));
+                } else {
+                    alert("ERRO DE SISTEMA: " + (data.erro || "Não foi possível completar a transação. Verifique se o ID do ativo existe."));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Erro de conexão com o banco de dados.");
+            });
+    });
+</script>
+
 </body>
 </html>
