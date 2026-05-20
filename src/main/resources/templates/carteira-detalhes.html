@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title th:text="'Zenith | ' + ${carteira.nome}">Zenith | Carteira</title>
+
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script th:src="@{/js/tailwind-config.js}"></script>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased relative min-h-screen">
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid z-0"></div>
+
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant">
+    <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
+        <a th:href="@{/home}" class="font-headline-lg text-[24px] font-bold text-primary tracking-tighter flex items-center gap-2">
+            <span class="material-symbols-outlined">arrow_back</span> Voltar
+        </a>
+    </div>
+</header>
+
+<main class="relative z-10 pt-[120px] pb-24 max-w-7xl mx-auto px-8">
+
+    <div class="flex justify-between items-end mb-12 border-b border-outline-variant pb-8">
+        <div>
+            <h1 class="font-display-lg text-4xl text-on-surface tracking-tight mb-2" th:text="${carteira.nome}">Carteira XYZ</h1>
+            <p class="font-data-sm text-secondary uppercase tracking-widest text-sm">
+                Saldo Disponível: <span class="text-primary-fixed text-lg ml-2" th:text="'R$ ' + ${#numbers.formatDecimal(carteira.saldoDisponivel, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+            </p>
+        </div>
+
+        <button onclick="document.getElementById('modalAporte').classList.remove('hidden')" class="bg-primary-container text-on-primary-container font-label-caps text-sm uppercase px-8 py-4 hover:bg-primary-fixed-dim transition-colors flex items-center gap-2 tracking-[0.1em]">
+            <span class="material-symbols-outlined text-[18px]">account_balance</span>
+            Novo Aporte
+        </button>
+    </div>
+
+    <div id="modalAporte" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
+        <div class="glass-panel p-8 max-w-md w-full border border-primary">
+            <h3 class="font-headline-lg text-xl mb-4 text-primary">Aporte de Recursos (PIX/TED)</h3>
+            <p class="text-sm text-secondary mb-6 font-data-sm">O valor mínimo para liquidação no gateway é R$ 50,00.</p>
+
+            <form id="formAporte" class="flex flex-col gap-4">
+                <input type="hidden" id="apCarteiraId" th:value="${carteira.id}" />
+                <input type="number" id="apValor" step="0.01" min="50" required placeholder="Valor (R$)" class="input-minimal w-full font-data-sm py-3 text-lg" />
+
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="button" onclick="document.getElementById('modalAporte').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
+                    <button type="submit" class="bg-primary-fixed text-on-primary-fixed font-label-caps text-xs px-6 py-2 uppercase hover:bg-primary transition-colors">Transferir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary mb-6">Terminal de Ativos</h2>
+    <div class="glass-panel p-8 border border-outline-variant">
+        <form id="formTransacao" class="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
+            <input type="hidden" id="txCarteira" th:value="${carteira.id}" />
+
+            <div class="flex flex-col gap-2">
+                <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Ativo</label>
+                <select id="txAtivo" class="input-minimal w-full bg-transparent py-2 outline-none font-data-sm text-on-surface" required>
+                    <option value="" disabled selected>Selecionar</option>
+                    <option class="bg-surface text-on-surface" th:each="ativo : ${ativos}" th:value="${ativo.id}" th:text="${ativo.ticker}"></option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Operação</label>
+                <select id="txTipo" class="input-minimal w-full bg-transparent py-2 font-data-sm" required>
+                    <option class="bg-surface text-on-surface" value="COMPRA">COMPRA</option>
+                    <option class="bg-surface text-on-surface" value="VENDA">VENDA</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Quantidade</label>
+                <input type="number" id="txQtd" class="input-minimal w-full bg-transparent py-2 font-data-sm" required min="1" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="font-data-sm text-xs text-secondary uppercase tracking-widest">Preço (R$)</label>
+                <input type="number" step="0.01" id="txPreco" class="input-minimal w-full bg-transparent py-2 font-data-sm" required min="0.01"/>
+            </div>
+
+            <button type="submit" class="w-full bg-primary-fixed text-on-primary-fixed font-label-caps text-xs py-3 hover:bg-primary-fixed-dim uppercase flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">bolt</span> Executar
+            </button>
+        </form>
+    </div>
+</main>
+
+<script>
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+    // --- SCRIPT DO DIAGRAMA (APORTE) ---
+    document.getElementById('formAporte').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('apCarteiraId').value;
+        const valor = document.getElementById('apValor').value;
+
+        fetch(`/api/carteiras/${id}/aporte`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify({ valor: parseFloat(valor) })
+        })
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                if (response.ok) { // 200 OK
+                    alert("Aporte realizado com sucesso!"); // UI: Exibe mensagem
+                    window.location.reload();
+                } else { // 400 Bad Request
+                    alert("Transferência não confirmada: " + (data.erro || "Falha")); // UI: Exibe Erro
+                }
+            });
+    });
+
+    // --- SCRIPT DA TRANSAÇÃO (REAPROVEITADO) ---
+    document.getElementById('formTransacao').addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch('/api/transacoes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify({
+                carteiraId: document.getElementById('txCarteira').value,
+                ativoId: document.getElementById('txAtivo').value,
+                tipo: document.getElementById('txTipo').value,
+                quantidade: document.getElementById('txQtd').value,
+                precoUnitario: document.getElementById('txPreco').value
+            })
+        }).then(async res => {
+            if (res.status === 201) {
+                alert("Ordem executada!");
+                window.location.reload();
+            } else {
+                const err = await res.json();
+                alert(err.erro || "Falha na transação.");
+            }
+        });
+    });
+</script>
+</body>
+</html>
