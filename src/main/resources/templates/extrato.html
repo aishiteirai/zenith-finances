@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Zenith | Extrato de Transações</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script th:src="@{/js/tailwind-config.js}"></script>
+
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased relative min-h-screen">
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid z-0"></div>
+
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant">
+  <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
+    <a th:href="@{/home}" class="font-headline-lg text-[24px] font-bold text-primary tracking-tighter flex items-center gap-2">
+      <span class="material-symbols-outlined">arrow_back</span> Voltar ao Dashboard
+    </a>
+    <div class="font-data-sm text-xs text-primary-fixed opacity-80 uppercase tracking-widest hidden md:block flex items-center gap-2">
+      <span class="w-2 h-2 bg-primary-fixed inline-block"></span>
+      [ Node: Ledger_History ]
+    </div>
+  </div>
+</header>
+
+<main class="relative z-10 pt-[120px] pb-24 max-w-7xl mx-auto px-8">
+  <div class="mb-12 border-b border-outline-variant pb-6 flex justify-between items-end">
+    <div>
+      <h1 class="font-display-lg text-4xl text-on-surface tracking-tight mb-2">Extrato de Operações</h1>
+      <p class="font-data-sm text-secondary uppercase tracking-widest text-xs">
+        Registro imutável de movimentações de ativos.
+      </p>
+    </div>
+    <div class="font-data-sm text-xs text-primary-fixed border border-primary-fixed px-4 py-2 uppercase tracking-widest">
+      Total de Registros: <span th:text="${#lists.size(transacoes)}">0</span>
+    </div>
+  </div>
+
+  <div class="glass-panel border border-outline-variant overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+        <tr class="border-b border-outline-variant bg-surface/50 font-data-sm text-[10px] text-secondary uppercase tracking-widest">
+          <th class="p-4 font-normal">Data / Hora (UTC)</th>
+          <th class="p-4 font-normal">Carteira</th>
+          <th class="p-4 font-normal">Ativo</th>
+          <th class="p-4 font-normal">Operação</th>
+          <th class="p-4 font-normal text-right">Qtd</th>
+          <th class="p-4 font-normal text-right">Preço Un.</th>
+          <th class="p-4 font-normal text-right">Valor Total (R$)</th>
+        </tr>
+        </thead>
+        <tbody class="font-data-sm text-sm">
+        <tr th:each="tx : ${transacoes}" class="border-b border-outline-variant/50 hover:bg-primary-container/5 transition-colors">
+          <td class="p-4 text-secondary" th:text="${#temporals.format(tx.dataOperacao, 'dd/MM/yyyy HH:mm:ss')}">00/00/0000 00:00</td>
+          <td class="p-4 text-on-surface" th:text="${tx.carteira.nome}">Carteira XYZ</td>
+          <td class="p-4">
+            <span class="bg-surface-container-high px-2 py-1 border border-outline-variant text-on-surface" th:text="${tx.ativo.ticker}">TICKER</span>
+          </td>
+          <td class="p-4">
+                            <span th:if="${tx.tipo.name() == 'COMPRA'}" class="text-primary uppercase tracking-widest text-xs flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">south_east</span> COMPRA
+                            </span>
+            <span th:if="${tx.tipo.name() == 'VENDA'}" class="text-secondary uppercase tracking-widest text-xs flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">north_east</span> VENDA
+                            </span>
+          </td>
+          <td class="p-4 text-right text-on-surface" th:text="${tx.quantidade}">0</td>
+          <td class="p-4 text-right text-secondary" th:text="${#numbers.formatDecimal(tx.precoUnitario, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+
+          <td class="p-4 text-right font-bold"
+              th:classappend="${tx.tipo.name() == 'COMPRA'} ? 'text-error' : 'text-primary-fixed'"
+              th:text="(${tx.tipo.name() == 'COMPRA'} ? '- R$ ' : '+ R$ ') + ${#numbers.formatDecimal(tx.calcularValorTotal(), 1, 'POINT', 2, 'COMMA')}">
+            0,00
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(transacoes)}">
+          <td colspan="7" class="p-12 text-center text-secondary uppercase tracking-widest text-xs">
+            <span class="material-symbols-outlined text-4xl mb-2 block opacity-50">receipt_long</span>
+            Nenhum registro de transação encontrado no node.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</body>
+</html>
