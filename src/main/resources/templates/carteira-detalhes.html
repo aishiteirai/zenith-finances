@@ -43,7 +43,6 @@
                 <span class="material-symbols-outlined text-[18px]">payments</span>
                 Resgatar
             </button>
-
             <button onclick="document.getElementById('modalAporte').classList.remove('hidden')" class="bg-primary-container text-on-primary-container font-label-caps text-sm uppercase px-8 py-4 hover:bg-primary-fixed-dim transition-colors flex items-center gap-2 tracking-[0.1em]">
                 <span class="material-symbols-outlined text-[18px]">account_balance</span>
                 Novo Aporte
@@ -51,42 +50,45 @@
         </div>
     </div>
 
-    <div id="modalAporte" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
-        <div class="glass-panel p-8 max-w-md w-full border border-primary">
-            <h3 class="font-headline-lg text-xl mb-4 text-primary">Aporte de Recursos (PIX/TED)</h3>
-            <p class="text-sm text-secondary mb-6 font-data-sm">O valor mínimo para liquidação no gateway é R$ 50,00.</p>
-
-            <form id="formAporte" class="flex flex-col gap-4">
-                <input type="hidden" id="apCarteiraId" th:value="${carteira.id}" />
-                <input type="number" id="apValor" step="0.01" min="50" required placeholder="Valor (R$)" class="input-minimal w-full font-data-sm py-3 text-lg" />
-
-                <div class="flex justify-end gap-4 mt-4">
-                    <button type="button" onclick="document.getElementById('modalAporte').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
-                    <button type="submit" class="bg-primary-fixed text-on-primary-fixed font-label-caps text-xs px-6 py-2 uppercase hover:bg-primary transition-colors">Transferir</button>
-                </div>
-            </form>
+    <div class="mb-12">
+        <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-secondary">layers</span>
+            <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary">Posições Estruturadas</h2>
         </div>
-    </div>
 
-    <div id="modalSaque" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
-        <div class="glass-panel p-8 max-w-md w-full border border-error">
-            <h3 class="font-headline-lg text-xl mb-4 text-error">Resgate de Recursos</h3>
-            <p class="text-sm text-secondary mb-6 font-data-sm">Insira o valor que deseja retirar para a sua conta vinculada.</p>
-
-            <form id="formSaque" class="flex flex-col gap-4">
-                <input type="hidden" id="sqCarteiraId" th:value="${carteira.id}" />
-                <input type="number" id="sqValor" step="0.01" min="50" required placeholder="Valor (R$)" class="input-minimal w-full font-data-sm py-3 text-lg" />
-
-                <div class="flex justify-end gap-4 mt-4">
-                    <button type="button" onclick="document.getElementById('modalSaque').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
-                    <button type="submit" class="bg-error text-on-surface font-label-caps text-xs px-6 py-2 uppercase hover:bg-error-container transition-colors text-black">Confirmar Saque</button>
-                </div>
-            </form>
+        <div class="glass-panel border border-outline-variant overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                <tr class="border-b border-outline-variant bg-surface/50 font-data-sm text-[10px] text-secondary uppercase tracking-widest">
+                    <th class="p-4 font-normal">Ativo / Código</th>
+                    <th class="p-4 font-normal">Empresa Custodiante</th>
+                    <th class="p-4 font-normal">Segmento</th>
+                    <th class="p-4 font-normal text-right">Quantidade Atual</th>
+                    <th class="p-4 font-normal text-right">Preço Médio de Entrada</th>
+                    <th class="p-4 font-normal text-right">Capital Alocado</th>
+                </tr>
+                </thead>
+                <tbody class="font-data-sm text-sm">
+                <tr th:each="pos : ${carteira.posicoes}" th:if="${pos.quantidadeAtual > 0}" class="border-b border-outline-variant/30 hover:bg-primary-container/5 transition-colors">
+                    <td class="p-4 font-bold text-primary-fixed" th:text="${pos.ativo.ticker}">TICKER</td>
+                    <td class="p-4 text-on-surface" th:text="${pos.ativo.nomeEmpresa}">Nome da Empresa</td>
+                    <td class="p-4 text-secondary text-xs uppercase tracking-wider th:text='${pos.ativo.categoria}'">CATEGORIA</td>
+                    <td class="p-4 text-right text-on-surface" th:text="${pos.quantidadeAtual}">0</td>
+                    <td class="p-4 text-right text-secondary" th:text="'R$ ' + ${#numbers.formatDecimal(pos.precoMedio, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                    <td class="p-4 text-right font-bold text-primary-fixed" th:text="'R$ ' + ${#numbers.formatDecimal(pos.quantidadeAtual * pos.precoMedio, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                </tr>
+                    <tr th:if="${carteira.posicoes == null || carteira.posicoes.?[quantidadeAtual > 0].isEmpty()}">
+                    <td colspan="6" class="p-8 text-center text-secondary uppercase tracking-widest text-xs opacity-60">
+                        Nenhuma alocação de ativos estruturada nesta infraestrutura de carteira.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest text-secondary mb-6">Terminal de Ativos</h2>
-    <div class="glass-panel p-8 border border-outline-variant">
+    <div class="glass-panel p-8 border border-outline-variant mb-12">
         <form id="formTransacao" class="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
             <input type="hidden" id="txCarteira" th:value="${carteira.id}" />
 
@@ -121,16 +123,46 @@
             </button>
         </form>
     </div>
+
+    <div id="modalAporte" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
+        <div class="glass-panel p-8 max-w-md w-full border border-primary">
+            <h3 class="font-headline-lg text-xl mb-4 text-primary">Aporte de Recursos (PIX/TED)</h3>
+            <p class="text-sm text-secondary mb-6 font-data-sm">O valor mínimo para liquidação no gateway é R$ 50,00.</p>
+            <form id="formAporte" class="flex flex-col gap-4">
+                <input type="hidden" id="apCarteiraId" th:value="${carteira.id}" />
+                <input type="number" id="apValor" step="0.01" min="50" required placeholder="Valor (R$)" class="input-minimal w-full font-data-sm py-3 text-lg" />
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="button" onclick="document.getElementById('modalAporte').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
+                    <button type="submit" class="bg-primary-fixed text-on-primary-fixed font-label-caps text-xs px-6 py-2 uppercase hover:bg-primary transition-colors">Transferir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalSaque" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
+        <div class="glass-panel p-8 max-w-md w-full border border-error">
+            <h3 class="font-headline-lg text-xl mb-4 text-error">Resgate de Recursos</h3>
+            <p class="text-sm text-secondary mb-6 font-data-sm">Insira o valor que deseja retirar para a sua conta de liquidação bancária externa.</p>
+            <form id="formSaque" class="flex flex-col gap-4">
+                <input type="hidden" id="sqCarteiraId" th:value="${carteira.id}" />
+                <input type="number" id="sqValor" step="0.01" min="50" required placeholder="Valor (R$)" class="input-minimal w-full font-data-sm py-3 text-lg" />
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="button" onclick="document.getElementById('modalSaque').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
+                    <button type="submit" class="bg-error text-background font-label-caps text-xs px-6 py-2 uppercase hover:bg-error-container hover:text-on-surface transition-colors font-bold">Confirmar Saque</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </main>
 
 <script>
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-    // --- SCRIPT DO DIAGRAMA (APORTE) ---
+    // --- SCRIPT DE APORTE ---
     document.getElementById('formAporte').addEventListener('submit', function(e) {
         e.preventDefault();
-
         const id = document.getElementById('apCarteiraId').value;
         const valor = document.getElementById('apValor').value;
 
@@ -141,19 +173,18 @@
         })
             .then(async response => {
                 const data = await response.json().catch(() => ({}));
-                if (response.ok) { // 200 OK
-                    alert("Aporte realizado com sucesso!"); // UI: Exibe mensagem
+                if (response.ok) {
+                    alert("Aporte realizado com sucesso!");
                     window.location.reload();
-                } else { // 400 Bad Request
-                    alert("Transferência não confirmada: " + (data.erro || "Falha")); // UI: Exibe Erro
+                } else {
+                    alert("Transferência não confirmada: " + (data.erro || "Falha"));
                 }
             });
     });
 
-    // --- SCRIPT DO DIAGRAMA (SAQUE) ---
+    // --- SCRIPT DE SAQUE ---
     document.getElementById('formSaque').addEventListener('submit', function(e) {
         e.preventDefault();
-
         const id = document.getElementById('sqCarteiraId').value;
         const valor = document.getElementById('sqValor').value;
 
@@ -164,16 +195,16 @@
         })
             .then(async response => {
                 const data = await response.json().catch(() => ({}));
-                if (response.ok) { // 200 OK
+                if (response.ok) {
                     alert("Saque processado com sucesso!");
                     window.location.reload();
-                } else { // 400 Bad Request
-                    alert("Falha no saque: " + (data.erro || "Verifique o saldo disponível."));
+                } else {
+                    alert("Falha no saque: " + (data.erro || "Verifique as diretrizes operacionais."));
                 }
             });
     });
 
-    // --- SCRIPT DA TRANSAÇÃO (REAPROVEITADO) ---
+    // --- SCRIPT DA TRANSAÇÃO ---
     document.getElementById('formTransacao').addEventListener('submit', function(e) {
         e.preventDefault();
         fetch('/api/transacoes', {
@@ -183,8 +214,8 @@
                 carteiraId: document.getElementById('txCarteira').value,
                 ativoId: document.getElementById('txAtivo').value,
                 tipo: document.getElementById('txTipo').value,
-                quantidade: document.getElementById('txQtd').value,
-                precoUnitario: document.getElementById('txPreco').value
+                quantidade: parseInt(document.getElementById('txQtd').value),
+                precoUnitario: parseFloat(document.getElementById('txPreco').value)
             })
         }).then(async res => {
             if (res.status === 201) {
