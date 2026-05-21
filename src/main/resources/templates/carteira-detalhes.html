@@ -38,10 +38,17 @@
             </p>
         </div>
 
-        <button onclick="document.getElementById('modalAporte').classList.remove('hidden')" class="bg-primary-container text-on-primary-container font-label-caps text-sm uppercase px-8 py-4 hover:bg-primary-fixed-dim transition-colors flex items-center gap-2 tracking-[0.1em]">
-            <span class="material-symbols-outlined text-[18px]">account_balance</span>
-            Novo Aporte
-        </button>
+        <div class="flex gap-4">
+            <button onclick="document.getElementById('modalSaque').classList.remove('hidden')" class="border border-outline-variant text-secondary font-label-caps text-sm uppercase px-8 py-4 hover:border-error hover:text-error transition-colors flex items-center gap-2 tracking-[0.1em]">
+                <span class="material-symbols-outlined text-[18px]">payments</span>
+                Resgatar
+            </button>
+
+            <button onclick="document.getElementById('modalAporte').classList.remove('hidden')" class="bg-primary-container text-on-primary-container font-label-caps text-sm uppercase px-8 py-4 hover:bg-primary-fixed-dim transition-colors flex items-center gap-2 tracking-[0.1em]">
+                <span class="material-symbols-outlined text-[18px]">account_balance</span>
+                Novo Aporte
+            </button>
+        </div>
     </div>
 
     <div id="modalAporte" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
@@ -56,6 +63,23 @@
                 <div class="flex justify-end gap-4 mt-4">
                     <button type="button" onclick="document.getElementById('modalAporte').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
                     <button type="submit" class="bg-primary-fixed text-on-primary-fixed font-label-caps text-xs px-6 py-2 uppercase hover:bg-primary transition-colors">Transferir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalSaque" class="hidden fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center">
+        <div class="glass-panel p-8 max-w-md w-full border border-error">
+            <h3 class="font-headline-lg text-xl mb-4 text-error">Resgate de Recursos</h3>
+            <p class="text-sm text-secondary mb-6 font-data-sm">Insira o valor que deseja retirar para a sua conta vinculada.</p>
+
+            <form id="formSaque" class="flex flex-col gap-4">
+                <input type="hidden" id="sqCarteiraId" th:value="${carteira.id}" />
+                <input type="number" id="sqValor" step="0.01" min="50" required placeholder="Valor (R$)" class="input-minimal w-full font-data-sm py-3 text-lg" />
+
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="button" onclick="document.getElementById('modalSaque').classList.add('hidden')" class="text-secondary font-label-caps text-xs uppercase px-4 py-2 hover:text-on-surface">Cancelar</button>
+                    <button type="submit" class="bg-error text-on-surface font-label-caps text-xs px-6 py-2 uppercase hover:bg-error-container transition-colors text-black">Confirmar Saque</button>
                 </div>
             </form>
         </div>
@@ -122,6 +146,29 @@
                     window.location.reload();
                 } else { // 400 Bad Request
                     alert("Transferência não confirmada: " + (data.erro || "Falha")); // UI: Exibe Erro
+                }
+            });
+    });
+
+    // --- SCRIPT DO DIAGRAMA (SAQUE) ---
+    document.getElementById('formSaque').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('sqCarteiraId').value;
+        const valor = document.getElementById('sqValor').value;
+
+        fetch(`/api/carteiras/${id}/saque`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify({ valor: parseFloat(valor) })
+        })
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                if (response.ok) { // 200 OK
+                    alert("Saque processado com sucesso!");
+                    window.location.reload();
+                } else { // 400 Bad Request
+                    alert("Falha no saque: " + (data.erro || "Verifique o saldo disponível."));
                 }
             });
     });

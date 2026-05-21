@@ -69,4 +69,23 @@ public class CarteiraService {
         carteira.adicionarSaldo(valor);
         return carteiraRepository.save(carteira);
     }
+
+    @Transactional
+    public Carteira processarSaque(Long carteiraId, BigDecimal valor, String emailInvestidor) {
+        Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, emailInvestidor);
+
+        // Verifica se há saldo suficiente antes de enviar ao Gateway
+        if (!carteira.verificarSaldoSuficiente(valor)) {
+            throw new RuntimeException("Saldo insuficiente para realizar este saque.");
+        }
+
+        // Comunicação com o Gateway
+        if (!gatewayPagamento.processarPagamento(valor)) {
+            throw new RuntimeException("Saque rejeitado pelo banco ou valor mínimo não atingido (R$ 50).");
+        }
+
+        // Atualiza a Carteira
+        carteira.deduzirSaldo(valor);
+        return carteiraRepository.save(carteira);
+    }
 }

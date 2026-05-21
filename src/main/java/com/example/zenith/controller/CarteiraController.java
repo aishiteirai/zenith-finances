@@ -67,4 +67,20 @@ public class CarteiraController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    @PostMapping("/api/carteiras/{id}/saque")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> realizarSaque(@PathVariable Long id,
+                                                             @RequestBody Map<String, BigDecimal> payload,
+                                                             @AuthenticationPrincipal UserDetails userDetails) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            carteiraService.processarSaque(id, payload.get("valor"), userDetails.getUsername());
+            response.put("mensagem", "Saque processado com sucesso!");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("erro", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 }
