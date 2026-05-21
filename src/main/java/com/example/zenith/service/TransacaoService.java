@@ -27,7 +27,14 @@ public class TransacaoService {
         Ativo ativo = ativoRepository.findById(dto.getAtivoId())
                 .orElseThrow(() -> new RuntimeException("Ativo não encontrado."));
 
+        // CORREÇÃO: Usando o 'dto' em vez de 'transacao' (que ainda não foi instanciada)
         BigDecimal valorTotal = dto.getPrecoUnitario().multiply(new BigDecimal(dto.getQuantidade()));
+
+        if (ativo.getValorMinimo() != null && valorTotal.compareTo(ativo.getValorMinimo()) < 0) {
+            throw new RuntimeException("Ordem Rejeitada: O valor total da operação (R$ " + valorTotal
+                    + ") é inferior ao aporte mínimo estipulado para o ativo " + ativo.getTicker()
+                    + " (Mínimo: R$ " + ativo.getValorMinimo() + ").");
+        }
 
         // 2. Validação de Saldo (se for compra)
         if (dto.getTipo() == TipoTransacao.COMPRA) {
@@ -63,8 +70,6 @@ public class TransacaoService {
         transacao.setPrecoUnitario(dto.getPrecoUnitario());
 
         // 6. Persistência
-        // O JPA detectaria alterações na Carteira e na Posição automaticamente,
-        // mas chamamos o save para espelhar exatamente o diagrama
         carteiraRepository.save(carteira);
         posicaoRepository.save(posicao);
         transacaoRepository.save(transacao);

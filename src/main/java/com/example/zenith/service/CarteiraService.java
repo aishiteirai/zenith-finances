@@ -7,7 +7,6 @@ import com.example.zenith.repository.InvestidorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,75 +16,67 @@ public class CarteiraService {
 
     @Autowired private CarteiraRepository carteiraRepository;
     @Autowired private InvestidorRepository investidorRepository;
-    @Autowired private GatewayPagamentoService gatewayPagamento;
 
-    public List<Carteira> listarCarteiras(String emailInvestidor) {
-        return carteiraRepository.findByInvestidorEmail(emailInvestidor);
+    public List<Carteira> listarCarteiras(String email) {
+        return carteiraRepository.findByInvestidorEmail(email);
     }
 
-    public Carteira buscarCarteiraPorIdEInvestidor(Long carteiraId, String emailInvestidor) {
-        Carteira carteira = carteiraRepository.findById(carteiraId)
-                .orElseThrow(() -> new RuntimeException("Carteira não encontrada."));
-
-        if (!carteira.getInvestidor().getEmail().equals(emailInvestidor)) {
-            throw new RuntimeException("Acesso negado a esta carteira.");
-        }
-        return carteira;
+    public Carteira buscarCarteiraPorIdEInvestidor(Long id, String email) {
+        return carteiraRepository.findByIdAndInvestidorEmail(id, email)
+                .orElseThrow(() -> new RuntimeException("Ambiente de carteira não localizado."));
     }
 
     @Transactional
-    public Carteira criarCarteira(String emailInvestidor, String nomeCarteira, BigDecimal saldoInicial) {
-        // REGRA: A carteira só poderá ser criada se houver saldo e for aprovado no gateway
-        if (saldoInicial == null || saldoInicial.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("É necessário um aporte inicial obrigatório para criar a carteira.");
-        }
-
-        if (!gatewayPagamento.processarPagamento(saldoInicial)) {
-            throw new RuntimeException("Falha no pagamento do aporte inicial. Carteira não criada.");
-        }
-
-        Investidor investidor = investidorRepository.findByEmail(emailInvestidor)
+    public Carteira criarCarteira(String email, String nome, BigDecimal valorInicial) {
+        Investidor investidor = investidorRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Investidor não encontrado."));
 
-        Carteira novaCarteira = new Carteira();
-        novaCarteira.setNome(nomeCarteira);
-        novaCarteira.setSaldoDisponivel(saldoInicial);
-        novaCarteira.setDataCriacao(LocalDate.now());
-        novaCarteira.setInvestidor(investidor);
-
-        return carteiraRepository.save(novaCarteira);
-    }
-
-    @Transactional
-    public Carteira processarAporte(Long carteiraId, BigDecimal valor, String emailInvestidor) {
-        Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, emailInvestidor);
-
-        // Comunicação com o Gateway
-        if (!gatewayPagamento.processarPagamento(valor)) {
-            throw new RuntimeException("Transferência rejeitada pelo banco ou valor mínimo não atingido (R$ 50).");
+        // Regra de validação: Criação consome do saldo em inércia
+        if (investidor.getSaldoGlobal().compareTo(valorInicial) < 0) {
+            throw new RuntimeException("Deploy recusado: Saldo em inércia insuficiente no cofre global.");
         }
 
-        // Atualiza a Carteira
-        carteira.adicionarSaldo(valor);
+        investidor.setSaldoGlobal(investidor.getSaldoGlobal().subtract(valorInicial));
+        investidorRepository.save(investidor);
+
+        Carteira carteira = new Carteira();
+        carteira.setNome(nome);
+        carteira.setSaldoDisponivel(valorInicial);
+        carteira.setDataCriacao(LocalDate.now());
+        carteira.setInvestidor(investidor);
+
         return carteiraRepository.save(carteira);
     }
 
     @Transactional
-    public Carteira processarSaque(Long carteiraId, BigDecimal valor, String emailInvestidor) {
-        Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, emailInvestidor);
+    public Carteira processarAporte(Long carteiraId, BigDecimal valor, String email) {
+        Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, email);
+        Investidor investidor = carteira.getInvestidor();
 
-        // Verifica se há saldo suficiente antes de enviar ao Gateway
-        if (!carteira.verificarSaldoSuficiente(valor)) {
-            throw new RuntimeException("Saldo insuficiente para realizar este saque.");
+        if (investidor.getSaldoGlobal().compareTo(valor) < 0) {
+            throw new RuntimeException("Aporte recusado: Saldo em inércia insuficiente.");
         }
 
-        // Comunicação com o Gateway
-        if (!gatewayPagamento.processarPagamento(valor)) {
-            throw new RuntimeException("Saque rejeitado pelo banco ou valor mínimo não atingido (R$ 50).");
+        investidor.setSaldoGlobal(investidor.getSaldoGlobal().subtract(valor));
+        carteira.setSaldoDisponivel(carteira.getSaldoDisponivel().add(valor));
+
+        investidorRepository.save(investidor);
+        return carteiraRepository.save(carteira);
+    }
+
+    @Transactional
+    public Carteira processarSaque(Long carteiraId, BigDecimal valor, String email) {
+        Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, email);
+        Investidor investidor = carteira.getInvestidor();
+
+        if (carteira.getSaldoDisponivel().compareTo(valor) < 0) {
+            throw new RuntimeException("Resgate recusado: Recursos indisponíveis na carteira.");
         }
 
-        // Atualiza a Carteira
-        carteira.deduzirSaldo(valor);
+        carteira.setSaldoDisponivel(carteira.getSaldoDisponivel().subtract(valor));
+        investidor.setSaldoGlobal(investidor.getSaldoGlobal().add(valor)); // Soma de volta ao saldo de inércia
+
+        investidorRepository.save(investidor);
         return carteiraRepository.save(carteira);
     }
 }
