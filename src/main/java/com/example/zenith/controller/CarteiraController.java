@@ -26,11 +26,11 @@ public class CarteiraController {
 
     @PostMapping("/carteiras/nova")
     public String criarNovaCarteira(@RequestParam String nome,
-                                    @RequestParam BigDecimal saldoInicial,
+                                    @RequestParam BigDecimal valorAporte, // <-- Alterado de saldoInicial para valorAporte
                                     @AuthenticationPrincipal UserDetails userDetails,
                                     RedirectAttributes redirectAttributes) {
         try {
-            carteiraService.criarCarteira(userDetails.getUsername(), nome, saldoInicial);
+            carteiraService.criarCarteira(userDetails.getUsername(), nome, valorAporte);
             return "redirect:/home";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erroCriacao", e.getMessage());

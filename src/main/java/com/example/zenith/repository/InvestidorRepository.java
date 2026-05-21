@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository
 public interface InvestidorRepository extends JpaRepository<Investidor, Long> {
 
-    // Método para encontrar um investidor na base de dados pelo seu e-mail
+    // CORRETO: Sem a palavra 'static'
     Optional<Investidor> findByEmail(String email);
+
 }
