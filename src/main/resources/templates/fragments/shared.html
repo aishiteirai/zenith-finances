@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="zenith-head-assets">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script th:src="@{/js/tailwind-config.js}"></script>
+
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+  <style>
+    /* Padronização Global de Tipografia e Reset */
+    * {
+      font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    /* Animação do Letreiro (Marquee Loop) */
+    @keyframes marqueeInfinite {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee-infinite {
+      display: flex;
+      width: max-content;
+      animation: marqueeInfinite 35s linear infinite;
+    }
+    .animate-marquee-infinite:hover {
+      animation-play-state: paused;
+    }
+
+    /* Containers e Painéis Premium Padronizados */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(25,25,25,0.7) 100%) !important;
+      border: 1px solid rgba(119, 255, 97, 0.08) !important;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-stat {
+      background: linear-gradient(135deg, rgba(12,12,12,0.95) 0%, rgba(30,30,30,0.6) 100%);
+      border: 1px solid rgba(119, 255, 97, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-stat:hover {
+      border-color: #77ff61 !important;
+      box-shadow: 0 0 25px rgba(119, 255, 97, 0.06);
+      transform: translateY(-2px);
+    }
+
+    /* Inputs Customizados */
+    .input-minimal {
+      background: transparent !important;
+      border: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: #ffffff !important;
+      border-radius: 0 !important;
+      transition: border-color 0.2s ease;
+    }
+    .input-minimal:focus {
+      border-color: #77ff61 !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<div th:fragment="zenith-header">
+
+  <div class="fixed top-0 left-0 w-full z-[60] bg-black border-b border-primary/20 backdrop-blur-md overflow-hidden h-10 flex items-center">
+    <div class="animate-marquee-infinite whitespace-nowrap flex gap-16 items-center">
+      <div class="flex gap-16 items-center">
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">BTC/BRL</span><span class="text-primary-fixed font-bold">R$ 362.450</span><span class="text-primary text-[10px]">+2.4%</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">PETR4</span><span class="text-on-surface font-bold">R$ 38,12</span><span class="text-error text-[10px]">-0.8%</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">CDB ITAU</span><span class="text-primary-fixed font-bold">110% CDI</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">ETH/BRL</span><span class="text-primary-fixed font-bold">R$ 18.210</span><span class="text-primary text-[10px]">+5.1%</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">VALE3</span><span class="text-on-surface font-bold">R$ 62,40</span><span class="text-primary text-[10px]">+1.1%</span></span>
+      </div>
+      <div class="flex gap-16 items-center" aria-hidden="true">
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">BTC/BRL</span><span class="text-primary-fixed font-bold">R$ 362.450</span><span class="text-primary text-[10px]">+2.4%</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">PETR4</span><span class="text-on-surface font-bold">R$ 38,12</span><span class="text-error text-[10px]">-0.8%</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">CDB ITAU</span><span class="text-primary-fixed font-bold">110% CDI</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">ETH/BRL</span><span class="text-primary-fixed font-bold">R$ 18.210</span><span class="text-primary text-[10px]">+5.1%</span></span>
+        <span class="flex items-center gap-2"><span class="text-secondary-fixed text-[10px]">VALE3</span><span class="text-on-surface font-bold">R$ 62,40</span><span class="text-primary text-[10px]">+1.1%</span></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="fixed top-10 left-0 w-full z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/5">
+    <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
+      <div class="flex items-center gap-4">
+                    <span class="w-10 h-10 bg-primary-fixed rounded-lg flex items-center justify-center text-black">
+                        <span class="material-symbols-outlined">rocket_launch</span>
+                    </span>
+        <div>
+          <h2 class="text-xs text-white/40 uppercase tracking-tighter">Terminal Operacional</h2>
+          <h1 class="text-md font-bold text-primary-fixed tracking-tight"
+              th:text="${investidor != null ? investidor.nome : #authentication.name}">Nome</h1>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex gap-8">
+        <a th:href="@{/home}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold">Dashboard</a>
+        <a th:href="@{/extrato}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold">Extrato</a>
+        <a th:href="@{/relatorios}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold">Analytics</a>
+        <a th:href="@{/perfil}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">person</span> Perfil
+        </a>
+      </nav>
+
+      <form th:action="@{/logout}" method="post" class="m-0">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="text-[10px] border border-error/40 text-error px-4 py-2 hover:bg-error hover:text-black transition-all uppercase font-bold">Sair</button>
+      </form>
+    </div>
+  </header>
+</div>
+
+</body>
+</html>

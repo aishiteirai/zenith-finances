@@ -1,180 +1,96 @@
 <!DOCTYPE html>
 <html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Zenith | Analytics Engine</title>
-
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script th:src="@{/js/tailwind-config.js}"></script>
-
+  <th:block th:replace="~{fragments/shared :: zenith-head-assets}"></th:block>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased relative min-h-screen">
-<div class="fixed inset-0 pointer-events-none bg-terminal-grid z-0"></div>
+<body class="bg-[#0a0a0a] text-on-surface antialiased relative min-h-screen pb-24">
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid opacity-20 z-0"></div>
 
-<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant">
-  <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
-    <a th:href="@{/home}" class="font-headline-lg text-[24px] font-bold text-primary tracking-tighter flex items-center gap-2">
-      <span class="material-symbols-outlined">arrow_back</span> Voltar ao Dashboard
-    </a>
-    <div class="font-data-sm text-xs text-primary-fixed opacity-80 uppercase tracking-widest hidden md:block flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse inline-block"></span>
-      [ Node: Analytics_Engine ]
-    </div>
-  </div>
-</header>
+<th:block th:replace="~{fragments/shared :: zenith-header}"></th:block>
 
-<main class="relative z-10 pt-[120px] pb-24 max-w-7xl mx-auto px-8">
-  <div class="mb-12 border-b border-outline-variant pb-6">
-    <h1 class="font-display-lg text-4xl text-on-surface tracking-tight mb-2">Análise de Portfólio</h1>
-    <p class="font-data-sm text-secondary uppercase tracking-widest text-xs">
-      Telemetria consolidada e distribuição de ativos.
-    </p>
+<main class="relative z-10 pt-[140px] max-w-7xl mx-auto px-8">
+  <div class="mb-12 border-b border-white/5 pb-6">
+    <h1 class="text-4xl font-bold text-white tracking-tight mb-2">Analytics Engine</h1>
+    <p class="text-white/40 uppercase tracking-widest text-xs">Telemetria de distribuição patrimonial e vetores de risco.</p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-    <div class="glass-panel p-6 border border-outline-variant">
-      <p class="font-data-sm text-xs text-secondary mb-2 uppercase tracking-widest">Patrimônio Líquido Total</p>
-      <p id="kpi-patrimonio" class="font-data-lg text-3xl text-primary-fixed">R$ 0,00</p>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div class="card-stat p-6 rounded-xl">
+      <p class="text-[10px] text-white/40 mb-2 uppercase tracking-widest">Patrimônio Consolidado</p>
+      <p id="kpi-patrimonio" class="text-3xl font-bold text-primary-fixed">R$ 0,00</p>
     </div>
-    <div class="glass-panel p-6 border border-outline-variant">
-      <p class="font-data-sm text-xs text-secondary mb-2 uppercase tracking-widest">Saldo em Caixa (Disponível)</p>
-      <p id="kpi-caixa" class="font-data-lg text-3xl text-on-surface">R$ 0,00</p>
+    <div class="card-stat p-6 rounded-xl">
+      <p class="text-[10px] text-white/40 mb-2 uppercase tracking-widest">Liquidez Disponível</p>
+      <p id="kpi-caixa" class="text-3xl font-bold text-white">R$ 0,00</p>
     </div>
-    <div class="glass-panel p-6 border border-outline-variant">
-      <p class="font-data-sm text-xs text-secondary mb-2 uppercase tracking-widest">Total de Carteiras Ativas</p>
-      <p class="font-data-lg text-3xl text-on-surface" th:text="${#lists.size(carteiras)}">0</p>
+    <div class="card-stat p-6 rounded-xl">
+      <p class="text-[10px] text-white/40 mb-2 uppercase tracking-widest">Arquiteturas Ativas</p>
+      <p class="text-3xl font-bold text-white" th:text="${#lists.size(carteiras)}">0</p>
     </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <div class="glass-panel p-8 border border-outline-variant">
-      <div class="flex items-center gap-2 mb-6">
-        <span class="material-symbols-outlined text-secondary">pie_chart</span>
-        <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest">Distribuição por Categoria</h2>
-      </div>
-      <div class="relative h-64 w-full flex justify-center">
-        <canvas id="chartCategorias"></canvas>
-      </div>
+    <div class="glass-panel p-8 rounded-2xl">
+      <div class="flex items-center gap-2 mb-6 text-white/60"><span class="material-symbols-outlined">pie_chart</span><h2 class="text-xs uppercase tracking-widest font-bold">Distribuição por Vetor</h2></div>
+      <div class="relative h-64 w-full flex justify-center"><canvas id="chartCategorias"></canvas></div>
     </div>
-
-    <div class="glass-panel p-8 border border-outline-variant">
-      <div class="flex items-center gap-2 mb-6">
-        <span class="material-symbols-outlined text-secondary">bar_chart</span>
-        <h2 class="font-data-lg text-sm text-on-surface uppercase tracking-widest">Patrimônio por Carteira</h2>
-      </div>
-      <div class="relative h-64 w-full">
-        <canvas id="chartCarteiras"></canvas>
-      </div>
+    <div class="glass-panel p-8 rounded-2xl">
+      <div class="flex items-center gap-2 mb-6 text-white/60"><span class="material-symbols-outlined">bar_chart</span><h2 class="text-xs uppercase tracking-widest font-bold">Custódia por Arquitetura</h2></div>
+      <div class="relative h-64 w-full"><canvas id="chartCarteiras"></canvas></div>
     </div>
   </div>
 </main>
 
 <script th:inline="javascript">
-  /* Extração de Dados via Thymeleaf */
   const carteiras = /*[[${carteiras}]]*/ [];
+  let totalCaixa = 0, totalInvestido = 0;
+  const categoriasMap = {}, carteirasLabels = [], carteirasData = [];
 
-  let totalCaixa = 0;
-  let totalInvestido = 0;
-
-  const categoriasMap = {};
-  const carteirasPatrimonio = {};
-  const carteirasLabels = [];
-  const carteirasData = [];
-
-  // Processamento dos dados
-  carteiras.forEach(carteira => {
-    let patrimonioCarteira = carteira.saldoDisponivel;
-    totalCaixa += carteira.saldoDisponivel;
-
-    carteirasLabels.push(carteira.nome);
-
-    if (carteira.posicoes && carteira.posicoes.length > 0) {
-      carteira.posicoes.forEach(pos => {
-        // Cálculo: Quantidade Atual * Preço Médio
-        const valorPosicao = pos.quantidadeAtual * pos.precoMedio;
-        patrimonioCarteira += valorPosicao;
-        totalInvestido += valorPosicao;
-
-        const cat = pos.ativo.categoria;
-        if (!categoriasMap[cat]) categoriasMap[cat] = 0;
-        categoriasMap[cat] += valorPosicao;
+  carteiras.forEach(c => {
+    let patCarteira = c.saldoDisponivel;
+    totalCaixa += c.saldoDisponivel;
+    carteirasLabels.push(c.nome);
+    if (c.posicoes) {
+      c.posicoes.forEach(p => {
+        if (p.quantidadeAtual > 0) {
+          const val = p.quantidadeAtual * p.precoMedio;
+          patCarteira += val;
+          totalInvestido += val;
+          categoriasMap[p.ativo.categoria] = (categoriasMap[p.ativo.categoria] || 0) + val;
+        }
       });
     }
-    carteirasData.push(patrimonioCarteira);
+    carteirasData.push(patCarteira);
   });
 
   const patrimonioTotal = totalCaixa + totalInvestido;
+  document.getElementById('kpi-patrimonio').innerText = 'R$ ' + patrimonioTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+  document.getElementById('kpi-caixa').innerText = 'R$ ' + totalCaixa.toLocaleString('pt-BR', {minimumFractionDigits: 2});
 
-  // Atualiza KPIs na UI
-  document.getElementById('kpi-patrimonio').innerText = 'R$ ' + patrimonioTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  document.getElementById('kpi-caixa').innerText = 'R$ ' + totalCaixa.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-  // Configurações globais Chart.js (Estilo Zenith)
   Chart.defaults.color = '#b9ccaf';
   Chart.defaults.font.family = "'JetBrains Mono', monospace";
 
-  // Gráfico 1: Distribuição por Categorias (Doughnut)
-  const ctxCategorias = document.getElementById('chartCategorias').getContext('2d');
-  new Chart(ctxCategorias, {
+  new Chart(document.getElementById('chartCategorias').getContext('2d'), {
     type: 'doughnut',
     data: {
-      labels: Object.keys(categoriasMap).length > 0 ? Object.keys(categoriasMap) : ['Sem Ativos'],
+      labels: Object.keys(categoriasMap).length ? Object.keys(categoriasMap) : ['Caixa Puro'],
       datasets: [{
-        data: Object.keys(categoriasMap).length > 0 ? Object.values(categoriasMap) : [1],
-        backgroundColor: ['#77ff61', '#00ff00', '#3b4b35', '#b9ccaf', '#eaffde'],
-        borderColor: '#121414',
-        borderWidth: 2
+        data: Object.keys(categoriasMap).length ? Object.values(categoriasMap) : [1],
+        backgroundColor: ['#77ff61', '#00ff00', '#3b4b35', '#b9ccaf'], borderColor: '#121414', borderWidth: 2
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'right' }
-      },
-      cutout: '75%'
-    }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } }, cutout: '75%' }
   });
 
-  // Gráfico 2: Patrimônio por Carteira (Bar)
-  const ctxCarteiras = document.getElementById('chartCarteiras').getContext('2d');
-  new Chart(ctxCarteiras, {
+  new Chart(document.getElementById('chartCarteiras').getContext('2d'), {
     type: 'bar',
     data: {
       labels: carteirasLabels,
-      datasets: [{
-        label: 'Valor Total (R$)',
-        data: carteirasData,
-        backgroundColor: 'rgba(119, 255, 97, 0.2)',
-        borderColor: '#77ff61',
-        borderWidth: 1,
-        borderRadius: 4
-      }]
+      datasets: [{ data: carteirasData, backgroundColor: 'rgba(119, 255, 97, 0.15)', borderColor: '#77ff61', borderWidth: 1, borderRadius: 4 }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: { color: 'rgba(59, 75, 53, 0.3)' }
-        },
-        x: {
-          grid: { display: false }
-        }
-      },
-      plugins: {
-        legend: { display: false }
-      }
-    }
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
   });
 </script>
 </body>
