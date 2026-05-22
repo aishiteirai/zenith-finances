@@ -17,11 +17,16 @@
   <link rel="stylesheet" th:href="@{/css/style.css}" />
 
   <style>
-    /* Padronização Global de Tipografia e Reset */
-    * {
-      font-family: 'JetBrains Mono', monospace !important;
+    /* Padronização Global de Tipografia */
+    body {
+      font-family: 'JetBrains Mono', monospace;
     }
 
+    /* Proteção para garantir que os ícones do Google renderizem corretamente */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
     /* Animação do Letreiro (Marquee Loop) */
     @keyframes marqueeInfinite {
       0% { transform: translateX(0); }
