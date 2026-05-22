@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface AtivoRepository extends JpaRepository<Ativo, Long> {
 
-    // CORRETO: Sem a palavra 'static'
     List<Ativo> findByCategoria(String categoria);
 
 }

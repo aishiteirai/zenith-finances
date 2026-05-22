@@ -1,5 +1,7 @@
 package com.example.zenith.controller;
 
+import com.example.zenith.model.Carteira;
+import com.example.zenith.model.Posicao;
 import com.example.zenith.repository.AtivoRepository;
 import com.example.zenith.service.CarteiraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +40,38 @@ public class CarteiraController {
         }
     }
 
-    // Abre a visualização "Dentro da Carteira"
     @GetMapping("/carteiras/{id}")
     public String detalhesCarteira(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            model.addAttribute("carteira", carteiraService.buscarCarteiraPorIdEInvestidor(id, userDetails.getUsername()));
+            Carteira carteira = carteiraService.buscarCarteiraPorIdEInvestidor(id, userDetails.getUsername());
+
+            // Cálculo Matemático: Rendimento Médio Ponderado da Carteira
+            BigDecimal totalInvestido = BigDecimal.ZERO;
+            BigDecimal totalRendimentoPonderado = BigDecimal.ZERO;
+
+            for (Posicao pos : carteira.getPosicoes()) {
+                if (pos.getQuantidadeAtual() > 0) {
+                    BigDecimal valorPosicao = pos.getPrecoMedio().multiply(new BigDecimal(pos.getQuantidadeAtual()));
+                    totalInvestido = totalInvestido.add(valorPosicao);
+
+                    if (pos.getAtivo().getTaxaRendimentoEstimada() != null) {
+                        totalRendimentoPonderado = totalRendimentoPonderado.add(
+                                valorPosicao.multiply(pos.getAtivo().getTaxaRendimentoEstimada())
+                        );
+                    }
+                }
+            }
+
+            BigDecimal rendimentoMedio = BigDecimal.ZERO;
+            if (totalInvestido.compareTo(BigDecimal.ZERO) > 0) {
+                // Divide o total ponderado pelo total investido (com arredondamento de 2 casas decimais)
+                rendimentoMedio = totalRendimentoPonderado.divide(totalInvestido, 2, java.math.RoundingMode.HALF_UP);
+            }
+
+            model.addAttribute("carteira", carteira);
             model.addAttribute("ativos", ativoRepository.findAll());
+            model.addAttribute("rendimentoMedio", rendimentoMedio);
+
             return "carteira-detalhes";
         } catch (Exception e) {
             return "redirect:/home";
