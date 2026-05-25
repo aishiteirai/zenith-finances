@@ -12,47 +12,44 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class Security {
 
-    /**
-     * Define o algoritmo de hashing BCrypt para encriptar as senhas dos investidores.
-     */
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    /**
-     * Configuração principal da cadeia de filtros de segurança.
-     */
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Configuração para o H2 Database Console
-                // Necessário desativar CSRF para o console e permitir a renderização de frames
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-
-                // 2. Definição de permissões de rotas
                 .authorizeHttpRequests(auth -> auth
-                        // Rotas públicas: Landing Page, Login, Registo e H2 Console
-                        .requestMatchers("/", "/login", "/register", "/error", "/css/**", "/js/**", "/h2-console/**").permitAll()
-                        // Qualquer outra rota do sistema Zenith exige autenticação
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-
-                // 3. Configuração do Formulário de Login personalizado (Interface Zenith)
                 .formLogin(form -> form
-                        .loginPage("/login") // Direciona para a sua página personalizada
-                        .defaultSuccessUrl("/home", true) // Rota após sucesso no login
+                        .loginPage("/login")
+
+                        // CORREÇÃO CRÍTICA: Redirecionamento dinâmico baseado na Role do utilizador
+                        .successHandler((request, response, authentication) -> {
+                            boolean isAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+                            if (isAdmin) {
+                                response.sendRedirect("/admin/dashboard");
+                            } else {
+                                response.sendRedirect("/home");
+                            }
+                        })
                         .permitAll()
                 )
-
-                // 4. Configuração de encerramento de sessão
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout") // Parâmetro para exibir a mensagem de sucesso no front-end
+                        .logoutSuccessUrl("/")
                         .permitAll()
                 );
 
+        // Permite a renderização correta das tabelas do console H2 através de frames
+        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
+
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

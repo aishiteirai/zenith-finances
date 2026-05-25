@@ -33,4 +33,7 @@ public class Ativo {
 
     @Column(precision = 19, scale = 2)
     private BigDecimal valorMinimo;
+
+    @Column(nullable = false)
+    private boolean visivel = true;
 }

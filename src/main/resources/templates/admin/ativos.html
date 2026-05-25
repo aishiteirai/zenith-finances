@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Zenith Admin | Catálogo</title>
+    <th:block th:replace="~{fragments/shared :: zenith-head-assets}"></th:block>
+    <style> .card-admin { background: linear-gradient(135deg, rgba(15, 5, 5, 0.95) 0%, rgba(25, 10, 10, 0.7) 100%); border: 1px solid rgba(239, 68, 68, 0.15); } </style>
+</head>
+<body class="bg-[#050505] text-on-surface antialiased relative min-h-screen pb-24">
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid opacity-10 z-0"></div>
+
+<header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-error/20">
+    <div class="flex justify-between items-center h-16 px-8 max-w-7xl mx-auto">
+        <div class="flex items-center gap-4 text-error font-bold tracking-widest uppercase text-xs"><span class="material-symbols-outlined">terminal</span> Zenith Master Node</div>
+        <nav class="hidden md:flex gap-8">
+            <a th:href="@{/admin/dashboard}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Painel Geral</a>
+            <a th:href="@{/admin/usuarios}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Investidores</a>
+            <a th:href="@{/admin/ativos}" class="text-error border-b border-error pb-1 text-xs uppercase tracking-widest font-bold transition-all">Catálogo</a>
+            <a th:href="@{/admin/transacoes}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Auditoria</a>
+        </nav>
+        <a th:href="@{/home}" class="text-[10px] text-white/40 hover:text-white uppercase font-bold tracking-wider transition-colors">Sair do Admin</a>
+    </div>
+</header>
+
+<main class="relative z-10 pt-[100px] max-w-7xl mx-auto px-8">
+    <div class="mb-8 border-b border-white/5 pb-6 flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-bold text-white tracking-tight">Market Maker (Catálogo)</h1>
+            <p class="text-white/40 uppercase tracking-widest text-xs mt-1">Injeção e suspensão de ativos na plataforma cliente.</p>
+        </div>
+        <button onclick="document.getElementById('modalNovoAtivo').classList.remove('hidden')" class="bg-error text-black text-[10px] font-bold uppercase px-6 py-2 rounded flex items-center gap-2 hover:bg-red-500 transition-colors">
+            <span class="material-symbols-outlined text-sm">add</span> Registrar Ativo
+        </button>
+    </div>
+
+    <div class="card-admin rounded-xl overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+            <tr class="border-b border-error/20 bg-error/5 text-[10px] text-error uppercase tracking-widest">
+                <th class="p-4 font-bold">Ticker / Empresa</th>
+                <th class="p-4 font-bold">Segmento</th>
+                <th class="p-4 font-bold text-right">Rentabilidade (Taxa)</th>
+                <th class="p-4 font-bold text-right">Aporte Mín.</th>
+                <th class="p-4 font-bold text-center">Status / Ação</th>
+            </tr>
+            </thead>
+            <tbody class="text-sm">
+            <tr th:each="a : ${ativos}" class="border-b border-white/5 hover:bg-white/5 transition-colors" th:classappend="${!a.visivel} ? 'opacity-40'">
+                <td class="p-4">
+                    <span class="text-white font-bold block" th:text="${a.ticker}">TICKER</span>
+                    <span class="text-[10px] text-white/40" th:text="${a.nomeEmpresa}">Empresa</span>
+                </td>
+                <td class="p-4 text-white/60 text-xs uppercase tracking-wider" th:text="${a.categoria}">CAT</td>
+                <td class="p-4 text-right">
+                    <span class="text-primary font-bold" th:text="${a.taxaRendimentoEstimada} + '%'">0%</span>
+                    <span class="text-[9px] text-white/30 block uppercase" th:text="${a.tipoRentabilidade}">TIPO</span>
+                </td>
+                <td class="p-4 text-right text-white" th:text="${a.valorMinimo != null and a.valorMinimo > 0} ? 'R$ ' + ${a.valorMinimo} : 'Livre'">R$ 0</td>
+                <td class="p-4 text-center">
+                    <form th:action="@{/admin/ativos/{id}/toggle-visibility(id=${a.id})}" method="POST" class="m-0">
+                        <button type="submit"
+                                th:classappend="${!a.visivel} ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary' : 'bg-error/10 text-error border-error/30 hover:bg-error'"
+                                class="border px-4 py-1.5 hover:text-black transition-all text-[10px] font-bold uppercase tracking-widest rounded"
+                                th:text="${!a.visivel} ? 'Reativar' : 'Ocultar (Soft Del)'">
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div id="modalNovoAtivo" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center">
+    <div class="card-admin p-8 max-w-lg w-full rounded-2xl">
+        <h3 class="text-xl font-bold mb-6 text-error">Listar Novo Ativo na Rede</h3>
+        <form th:action="@{/admin/ativos/novo}" th:object="${novoAtivo}" method="POST" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="ticker" required placeholder="TICKER (ex: AAPL34)" class="input-minimal w-full py-2 uppercase" />
+                <input type="text" name="categoria" required placeholder="Segmento (ex: ACAO)" class="input-minimal w-full py-2 uppercase" />
+            </div>
+            <input type="text" name="nomeEmpresa" required placeholder="Nome da Entidade emissora" class="input-minimal w-full py-2" />
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" step="0.01" name="taxaRendimentoEstimada" placeholder="Taxa Estimada (%)" class="input-minimal w-full py-2" />
+                <input type="text" name="tipoRentabilidade" placeholder="Tipo (ex: VARIAVEL)" class="input-minimal w-full py-2 uppercase" />
+            </div>
+            <input type="number" step="0.01" name="valorMinimo" placeholder="Aporte Mínimo (R$ - opcional)" class="input-minimal w-full py-2" />
+
+            <div class="flex justify-end gap-4 pt-4">
+                <button type="button" onclick="document.getElementById('modalNovoAtivo').classList.add('hidden')" class="text-[10px] uppercase text-white/50 hover:text-white">Cancelar</button>
+                <button type="submit" class="bg-error text-black px-6 py-2 text-[10px] font-bold uppercase rounded hover:bg-red-500">Injetar no App</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

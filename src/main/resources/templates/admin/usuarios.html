@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Zenith Admin | Operadores</title>
+    <th:block th:replace="~{fragments/shared :: zenith-head-assets}"></th:block>
+    <style>
+        .card-admin { background: linear-gradient(135deg, rgba(15, 5, 5, 0.95) 0%, rgba(25, 10, 10, 0.7) 100%); border: 1px solid rgba(239, 68, 68, 0.15); }
+    </style>
+</head>
+<body class="bg-[#050505] text-on-surface antialiased relative min-h-screen pb-24">
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid opacity-10 z-0"></div>
+
+<header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-error/20">
+    <div class="flex justify-between items-center h-16 px-8 max-w-7xl mx-auto">
+        <div class="flex items-center gap-4 text-error font-bold tracking-widest uppercase text-xs">
+            <span class="material-symbols-outlined">terminal</span> Zenith Master Node
+        </div>
+        <nav class="hidden md:flex gap-8">
+            <a th:href="@{/admin/dashboard}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Painel Geral</a>
+            <a th:href="@{/admin/usuarios}" class="text-error border-b border-error pb-1 text-xs uppercase tracking-widest font-bold transition-all">Investidores</a>
+            <a th:href="@{/admin/ativos}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Catálogo</a>
+            <a th:href="@{/admin/transacoes}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Auditoria</a>
+        </nav>
+        <a th:href="@{/home}" class="text-[10px] text-white/40 hover:text-white uppercase font-bold tracking-wider transition-colors">Sair do Admin</a>
+    </div>
+</header>
+
+<main class="relative z-10 pt-[100px] max-w-7xl mx-auto px-8">
+    <div class="mb-8 border-b border-white/5 pb-6">
+        <h1 class="text-3xl font-bold text-white tracking-tight">Controle de Operadores</h1>
+        <p class="text-white/40 uppercase tracking-widest text-xs mt-1">Gestão de permissões e congelamento de contas (Freeze).</p>
+    </div>
+
+    <div class="card-admin rounded-xl overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+            <tr class="border-b border-error/20 bg-error/5 text-[10px] text-error uppercase tracking-widest">
+                <th class="p-4 font-bold">ID / Nome</th>
+                <th class="p-4 font-bold">E-mail (Chave)</th>
+                <th class="p-4 font-bold">Perfil</th>
+                <th class="p-4 font-bold text-right">Saldo Global (Cofre)</th>
+                <th class="p-4 font-bold text-center">Status / Ação</th>
+            </tr>
+            </thead>
+            <tbody class="text-sm">
+            <tr th:each="u : ${usuarios}" class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                <td class="p-4">
+                    <span class="text-white font-bold block" th:text="${u.nome}">Nome</span>
+                    <span class="text-[10px] text-white/30" th:text="'NODE-' + ${u.id}">ID</span>
+                </td>
+                <td class="p-4 text-white/60 font-mono text-xs" th:text="${u.email}">email</td>
+                <td class="p-4">
+                    <span th:if="${u.role == 'ROLE_ADMIN'}" class="text-[9px] bg-error/20 text-error px-2 py-1 rounded font-bold uppercase tracking-widest">Master</span>
+                    <span th:if="${u.role == 'ROLE_USER'}" class="text-[9px] bg-primary/10 text-primary px-2 py-1 rounded font-bold uppercase tracking-widest">User</span>
+                </td>
+                <td class="p-4 text-right text-white font-bold" th:text="'R$ ' + ${#numbers.formatDecimal(u.saldoGlobal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+                <td class="p-4 text-center">
+                    <form th:action="@{/admin/usuarios/{id}/toggle-block(id=${u.id})}" method="POST" class="m-0" th:if="${u.role != 'ROLE_ADMIN'}">
+                        <button type="submit"
+                                th:classappend="${u.bloqueado} ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary' : 'bg-error/10 text-error border-error/30 hover:bg-error'"
+                                class="border px-4 py-1.5 hover:text-black transition-all text-[10px] font-bold uppercase tracking-widest rounded"
+                                th:text="${u.bloqueado} ? 'Desbloquear' : 'Congelar (Freeze)'">
+                        </button>
+                    </form>
+                    <span th:if="${u.role == 'ROLE_ADMIN'}" class="text-[10px] text-white/20 uppercase tracking-widest">Protegido</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

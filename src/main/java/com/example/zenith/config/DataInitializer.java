@@ -122,6 +122,19 @@ public class DataInitializer {
 
                 System.out.println("[ZENITH ENGINE] Inicialização Concluída.");
             }
+
+            String emailAdmin = "admin@zenith.node";
+            if (investidorRepository.findByEmail(emailAdmin).isEmpty()) {
+                Investidor admin = new Investidor();
+                admin.setNome("Master Node Admin");
+                admin.setEmail(emailAdmin);
+                admin.setSenhaHash(passwordEncoder.encode("admin1234"));
+                admin.setSaldoGlobal(BigDecimal.ZERO);
+                admin.setRole("ROLE_ADMIN");
+
+                investidorRepository.save(admin);
+                System.out.println("[ZENITH SECURITY] Node Admin mestre criado com sucesso.");
+            }
         };
     }
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Zenith Admin | Auditoria Global</title>
+    <th:block th:replace="~{fragments/shared :: zenith-head-assets}"></th:block>
+    <style> .card-admin { background: linear-gradient(135deg, rgba(15, 5, 5, 0.95) 0%, rgba(25, 10, 10, 0.7) 100%); border: 1px solid rgba(239, 68, 68, 0.15); } </style>
+</head>
+<body class="bg-[#050505] text-on-surface antialiased relative min-h-screen pb-24">
+<div class="fixed inset-0 pointer-events-none bg-terminal-grid opacity-10 z-0"></div>
+
+<header class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-error/20">
+    <div class="flex justify-between items-center h-16 px-8 max-w-7xl mx-auto">
+        <div class="flex items-center gap-4 text-error font-bold tracking-widest uppercase text-xs"><span class="material-symbols-outlined">terminal</span> Zenith Master Node</div>
+        <nav class="hidden md:flex gap-8">
+            <a th:href="@{/admin/dashboard}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Painel Geral</a>
+            <a th:href="@{/admin/usuarios}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Investidores</a>
+            <a th:href="@{/admin/ativos}" class="text-secondary hover:text-error text-xs uppercase tracking-widest font-bold transition-all">Catálogo</a>
+            <a th:href="@{/admin/transacoes}" class="text-error border-b border-error pb-1 text-xs uppercase tracking-widest font-bold transition-all">Auditoria</a>
+        </nav>
+        <a th:href="@{/home}" class="text-[10px] text-white/40 hover:text-white uppercase font-bold tracking-wider transition-colors">Sair do Admin</a>
+    </div>
+</header>
+
+<main class="relative z-10 pt-[100px] max-w-7xl mx-auto px-8">
+    <div class="mb-8 border-b border-white/5 pb-6">
+        <h1 class="text-3xl font-bold text-white tracking-tight">Ledger de Auditoria (Global)</h1>
+        <p class="text-white/40 uppercase tracking-widest text-xs mt-1">Monitoramento irrestrito de fluxo de capitais e ordens de mercado.</p>
+    </div>
+
+    <div class="card-admin rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                <tr class="border-b border-error/20 bg-error/5 text-[10px] text-error uppercase tracking-widest">
+                    <th class="p-4 font-bold">Data (Timestamp)</th>
+                    <th class="p-4 font-bold">Node (Investidor)</th>
+                    <th class="p-4 font-bold">Ativo</th>
+                    <th class="p-4 font-bold">Ordem</th>
+                    <th class="p-4 font-bold text-right">Volume</th>
+                    <th class="p-4 font-bold text-right">Valuation Final</th>
+                </tr>
+                </thead>
+                <tbody class="text-sm">
+                <tr th:each="tx : ${transacoes}" class="border-b border-white/5 hover:bg-white/5 transition-colors font-mono text-xs">
+                    <td class="p-4 text-white/50" th:text="${#temporals.format(tx.dataOperacao, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td class="p-4 text-white font-bold" th:text="${tx.carteira.investidor.email}">email</td>
+                    <td class="p-4"><span class="bg-white/10 px-2 py-0.5 rounded text-white" th:text="${tx.ativo.ticker}"></span></td>
+                    <td class="p-4">
+                        <span th:if="${tx.tipo.name() == 'COMPRA'}" class="text-primary font-bold">COMPRA</span>
+                        <span th:if="${tx.tipo.name() == 'VENDA'}" class="text-error font-bold">VENDA</span>
+                    </td>
+                    <td class="p-4 text-right text-white/60" th:text="${tx.quantidade} + ' un. @ R$ ' + ${tx.precoUnitario}"></td>
+                    <td class="p-4 text-right font-bold text-white" th:text="'R$ ' + ${#numbers.formatDecimal(tx.quantidade * tx.precoUnitario, 1, 'POINT', 2, 'COMMA')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>
