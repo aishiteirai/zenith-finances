@@ -36,4 +36,7 @@ public class Ativo {
 
     @Column(nullable = false)
     private boolean visivel = true;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal precoAtual;
 }
