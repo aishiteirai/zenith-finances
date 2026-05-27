@@ -1,8 +1,10 @@
 package com.example.zenith.controller;
 
+import com.example.zenith.model.Ativo;
 import com.example.zenith.model.Carteira;
 import com.example.zenith.model.Investidor;
 import com.example.zenith.model.Posicao;
+import com.example.zenith.repository.AtivoRepository;
 import com.example.zenith.repository.InvestidorRepository;
 import com.example.zenith.service.CarteiraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +25,13 @@ public class RelatorioController {
 
     @Autowired private CarteiraService carteiraService;
     @Autowired private InvestidorRepository investidorRepository;
+    @Autowired private AtivoRepository ativoRepository; // NOVO
 
     @GetMapping("/relatorios")
     public String exibirAnalytics(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
             String email = userDetails.getUsername();
 
-            // Injeta o investidor para o menu unificado não falhar
             Investidor investidor = investidorRepository.findByEmail(email).orElse(null);
             model.addAttribute("investidor", investidor);
 
@@ -38,7 +40,6 @@ public class RelatorioController {
             BigDecimal totalCaixa = BigDecimal.ZERO;
             BigDecimal totalInvestido = BigDecimal.ZERO;
 
-            // Estruturas limpas para enviar ao Chart.js
             Map<String, BigDecimal> categoriasMap = new HashMap<>();
             List<String> carteirasLabels = new ArrayList<>();
             List<BigDecimal> carteirasData = new ArrayList<>();
@@ -68,18 +69,25 @@ public class RelatorioController {
                 percentualAlocado = totalInvestido.divide(patrimonioTotal, 4, java.math.RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
             }
 
-            // Injeta os dados já processados no ecrã
             model.addAttribute("carteirasCount", carteiras.size());
             model.addAttribute("patrimonioTotal", patrimonioTotal);
             model.addAttribute("totalCaixa", totalCaixa);
             model.addAttribute("totalInvestido", totalInvestido);
             model.addAttribute("percentualAlocado", percentualAlocado);
 
-            // Injeta as arrays limpas para os Gráficos
             model.addAttribute("catLabels", categoriasMap.keySet());
             model.addAttribute("catData", categoriasMap.values());
             model.addAttribute("cartLabels", carteirasLabels);
             model.addAttribute("cartData", carteirasData);
+
+            // NOVO: Busca e ordena ativos para não estarem mockados
+            List<Ativo> topAtivos = ativoRepository.findAll();
+            topAtivos.sort((a, b) -> {
+                if (a.getTaxaRendimentoEstimada() == null) return 1;
+                if (b.getTaxaRendimentoEstimada() == null) return -1;
+                return b.getTaxaRendimentoEstimada().compareTo(a.getTaxaRendimentoEstimada());
+            });
+            model.addAttribute("topAtivos", topAtivos);
         }
         return "relatorios";
     }

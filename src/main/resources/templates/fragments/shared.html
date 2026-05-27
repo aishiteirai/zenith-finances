@@ -17,17 +17,13 @@
   <link rel="stylesheet" th:href="@{/css/style.css}" />
 
   <style>
-    /* Padronização Global de Tipografia */
     body {
       font-family: 'JetBrains Mono', monospace;
     }
-
-    /* Proteção para garantir que os ícones do Google renderizem corretamente */
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
-    /* Animação do Letreiro (Marquee Loop) */
     @keyframes marqueeInfinite {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
@@ -40,8 +36,6 @@
     .animate-marquee-infinite:hover {
       animation-play-state: paused;
     }
-
-    /* Containers e Painéis Premium Padronizados */
     .glass-panel {
       background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(25,25,25,0.7) 100%) !important;
       border: 1px solid rgba(119, 255, 97, 0.08) !important;
@@ -58,8 +52,6 @@
       box-shadow: 0 0 25px rgba(119, 255, 97, 0.06);
       transform: translateY(-2px);
     }
-
-    /* Inputs Customizados */
     .input-minimal {
       background: transparent !important;
       border: none !important;
@@ -101,9 +93,9 @@
   <header class="fixed top-10 left-0 w-full z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/5">
     <div class="flex justify-between items-center h-20 px-8 max-w-7xl mx-auto">
       <div class="flex items-center gap-4">
-                    <span class="w-10 h-10 bg-primary-fixed rounded-lg flex items-center justify-center text-black">
-                        <span class="material-symbols-outlined">rocket_launch</span>
-                    </span>
+        <span class="w-10 h-10 bg-primary-fixed rounded-lg flex items-center justify-center text-black">
+            <span class="material-symbols-outlined">rocket_launch</span>
+        </span>
         <div>
           <h2 class="text-xs text-white/40 uppercase tracking-tighter">Terminal Operacional</h2>
           <h1 class="text-md font-bold text-primary-fixed tracking-tight"
@@ -111,12 +103,16 @@
         </div>
       </div>
 
-      <nav class="hidden md:flex gap-8">
+      <nav class="hidden md:flex gap-8 items-center">
         <a th:href="@{/home}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold">Dashboard</a>
         <a th:href="@{/extrato}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold">Extrato</a>
         <a th:href="@{/relatorios}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold">Analytics</a>
         <a th:href="@{/perfil}" class="text-secondary hover:text-primary text-xs uppercase tracking-widest transition-colors font-bold flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">person</span> Perfil
+        </a>
+
+        <a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:href="@{/admin/dashboard}" class="text-error hover:text-red-400 text-xs uppercase tracking-widest transition-colors font-bold flex items-center gap-1 ml-4 border-l border-white/20 pl-4">
+          <span class="material-symbols-outlined text-sm">shield</span> Modo Admin
         </a>
       </nav>
 
@@ -126,6 +122,20 @@
       </form>
     </div>
   </header>
+
+  <div id="toastSystem" class="hidden fixed bottom-8 right-8 bg-error text-black px-6 py-4 rounded-lg font-bold text-xs tracking-widest uppercase z-[999] shadow-[0_0_20px_rgba(239,68,68,0.3)] flex items-center gap-3 transition-opacity">
+    <span class="material-symbols-outlined">warning</span>
+    <span id="toastMsg">Mensagem de erro...</span>
+  </div>
+
+  <script>
+    function showSystemToast(message) {
+      const toast = document.getElementById('toastSystem');
+      document.getElementById('toastMsg').innerText = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+  </script>
 </div>
 
 </body>

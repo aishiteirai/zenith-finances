@@ -8,7 +8,8 @@ import java.util.List;
 
 @Repository
 public interface AtivoRepository extends JpaRepository<Ativo, Long> {
-
     List<Ativo> findByCategoria(String categoria);
 
+    // NOVO: Busca apenas os ativos não ocultos pelo Admin
+    List<Ativo> findByVisivelTrue();
 }

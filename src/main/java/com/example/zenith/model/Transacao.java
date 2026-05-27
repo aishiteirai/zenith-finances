@@ -22,8 +22,9 @@ public class Transacao {
     @JoinColumn(name = "carteira_id", nullable = false)
     private Carteira carteira;
 
+    // Alterado para nullable = true para permitir depósitos/saques sem ativos atrelados
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ativo_id", nullable = false)
+    @JoinColumn(name = "ativo_id", nullable = true)
     private Ativo ativo;
 
     @Enumerated(EnumType.STRING)
@@ -39,7 +40,6 @@ public class Transacao {
     @Column(nullable = false)
     private LocalDateTime dataOperacao = LocalDateTime.now();
 
-    // Método de Negócio exigido no UML
     public BigDecimal calcularValorTotal() {
         if (precoUnitario != null) {
             return precoUnitario.multiply(new BigDecimal(quantidade));

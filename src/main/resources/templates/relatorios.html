@@ -78,17 +78,11 @@
           </tr>
           </thead>
           <tbody class="text-xs divide-y divide-white/5">
-          <tr class="hover:bg-white/5 transition-colors">
-            <td class="py-3 font-bold text-white">BTC/BRL</td><td class="py-3 text-white/40 uppercase">Criptoativo</td><td class="py-3 text-right text-white/60">Volatilidade Real</td><td class="py-3 text-right text-primary font-bold">▲ +24.10%</td>
-          </tr>
-          <tr class="hover:bg-white/5 transition-colors">
-            <td class="py-3 font-bold text-white">PETR4</td><td class="py-3 text-white/40 uppercase">Renda Variável</td><td class="py-3 text-right text-white/60">15.20% a.a.</td><td class="py-3 text-right text-primary font-bold">▲ +15.20%</td>
-          </tr>
-          <tr class="hover:bg-white/5 transition-colors">
-            <td class="py-3 font-bold text-white">CDB-ITAU-2027</td><td class="py-3 text-white/40 uppercase">Renda Fixa</td><td class="py-3 text-right text-white/60">110% do CDI</td><td class="py-3 text-right text-primary-fixed font-bold">● +11.85%</td>
-          </tr>
-          <tr class="hover:bg-white/5 transition-colors">
-            <td class="py-3 font-bold text-white">VALE3</td><td class="py-3 text-white/40 uppercase">Renda Variável</td><td class="py-3 text-right text-white/60">11.40% a.a.</td><td class="py-3 text-right text-primary font-bold">▲ +11.40%</td>
+          <tr th:each="ativo : ${topAtivos}" th:if="${ativo.visivel}" class="hover:bg-white/5 transition-colors">
+            <td class="py-3 font-bold text-white" th:text="${ativo.ticker}"></td>
+            <td class="py-3 text-white/40 uppercase" th:text="${ativo.categoria}"></td>
+            <td class="py-3 text-right text-white/60" th:text="${ativo.tipoRentabilidade}"></td>
+            <td class="py-3 text-right text-primary font-bold" th:text="'+' + ${ativo.taxaRendimentoEstimada} + '%'"></td>
           </tr>
           </tbody>
         </table>
@@ -109,7 +103,6 @@
 </main>
 
 <script th:inline="javascript">
-  // Leitura de Listas Simples (Resolve o Bug de Recursão)
   const catLabels = /*[[${catLabels}]]*/ [];
   const catData = /*[[${catData}]]*/ [];
   const cartLabels = /*[[${cartLabels}]]*/ [];
@@ -120,7 +113,6 @@
   Chart.defaults.color = '#b9ccaf';
   Chart.defaults.font.family = "'JetBrains Mono', monospace";
 
-  // Gráfico 1: Evolução
   new Chart(document.getElementById('chartEvolucao').getContext('2d'), {
     type: 'line',
     data: {
@@ -134,7 +126,6 @@
     options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
   });
 
-  // Gráfico 2: Categorias
   new Chart(document.getElementById('chartCategorias').getContext('2d'), {
     type: 'doughnut',
     data: {
@@ -147,7 +138,6 @@
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } }, cutout: '72%' }
   });
 
-  // Gráfico 3: Carteiras
   new Chart(document.getElementById('chartCarteirasPie').getContext('2d'), {
     type: 'pie',
     data: {

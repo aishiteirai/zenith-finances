@@ -51,7 +51,7 @@
                 <h3 class="text-xs uppercase tracking-[0.2em] font-bold">Performance Diária: Ações</h3>
             </div>
             <div class="space-y-4">
-                <div th:each="ativo : ${rankingAcoes}" class="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl">
+                <div th:each="ativo : ${rankingAcoes}" th:if="${ativo.visivel}" class="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl">
                     <span class="font-bold text-white" th:text="${ativo.ticker}">PETR4</span>
                     <div class="text-right">
                         <span class="text-primary font-bold block" th:text="'+' + ${ativo.taxaRendimentoEstimada} + '%'">+0.0%</span>
@@ -67,10 +67,10 @@
                 <h3 class="text-xs uppercase tracking-[0.2em] font-bold">Performance Diária: Cripto</h3>
             </div>
             <div class="space-y-4">
-                <div th:each="ativo : ${rankingCripto}" class="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl">
+                <div th:each="ativo : ${rankingCripto}" th:if="${ativo.visivel}" class="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl">
                     <span class="font-bold text-white" th:text="${ativo.ticker}">BTC/BRL</span>
                     <div class="text-right">
-                        <span class="text-primary font-bold block">+8.4%</span>
+                        <span class="text-primary font-bold block" th:text="'+' + ${ativo.taxaRendimentoEstimada} + '%'">+8.4%</span>
                         <span class="text-[10px] text-white/40">Fracionado</span>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
     <div class="card-stat p-8 max-w-md w-full rounded-2xl">
         <h3 class="text-xl font-bold mb-4 text-primary-fixed">Injetar Recursos no App</h3>
         <form id="formAporteGlobal" class="space-y-4">
-            <input type="number" id="valorGlobal" step="0.01" min="1" required placeholder="Valor (R$)" class="input-minimal w-full py-3" />
+            <input type="number" id="valorGlobal" step="0.01" min="0.01" required placeholder="Valor (R$)" class="input-minimal w-full py-3" />
             <div class="flex justify-end gap-4 pt-4">
                 <button type="button" onclick="document.getElementById('modalAporteGlobal').classList.add('hidden')" class="text-[10px] uppercase text-white/50">Cancelar</button>
                 <button type="submit" class="bg-primary-fixed text-black px-6 py-2 text-[10px] font-bold uppercase rounded">Confirmar Depósito</button>
@@ -115,7 +115,7 @@
             </div>
             <div class="space-y-2">
                 <label class="text-[10px] text-white/40 uppercase tracking-widest block">Aporte de Inicialização (R$)</label>
-                <input type="number" name="valorAporte" step="0.01" min="50" placeholder="Mínimo 50.00" class="input-minimal w-full py-3" required />
+                <input type="number" name="valorAporte" step="0.01" min="0.01" placeholder="Mínimo 0.01" class="input-minimal w-full py-3" required />
             </div>
             <div class="flex justify-end gap-4 pt-4">
                 <button type="button" onclick="document.getElementById('modalNovaCarteira').classList.add('hidden')" class="text-[10px] uppercase text-white/50">Cancelar</button>
@@ -134,7 +134,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', [header]: token },
             body: JSON.stringify({ valor: parseFloat(document.getElementById('valorGlobal').value) })
-        }).then(res => res.ok ? window.location.reload() : alert("Erro no depósito"));
+        }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro no depósito"));
     });
 </script>
 </body>

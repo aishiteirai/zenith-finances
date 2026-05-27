@@ -14,7 +14,9 @@
         <div>
             <h1 class="text-4xl font-bold text-white tracking-tight mb-4" th:text="${carteira.nome}">Carteira</h1>
             <p class="text-white/40 uppercase tracking-widest text-xs flex items-center gap-6">
-                <span>Caixa da Carteira: <span class="text-white text-lg ml-1 font-bold" th:text="'R$ ' + ${#numbers.formatDecimal(carteira.saldoDisponivel, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span></span>
+                <span>Caixa (Inércia): <span class="text-white text-lg ml-1 font-bold" th:text="'R$ ' + ${#numbers.formatDecimal(carteira.saldoDisponivel, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span></span>
+                <span class="text-white/20">|</span>
+                <span>Capital Alocado: <span class="text-white text-lg ml-1 font-bold" th:text="'R$ ' + ${#numbers.formatDecimal(totalInvestido, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span></span>
                 <span class="text-white/20">|</span>
                 <span>Rendimento Alocado: <span class="text-primary-fixed text-lg ml-1 font-bold" th:text="'+' + ${#numbers.formatDecimal(rendimentoMedio, 1, 'POINT', 2, 'COMMA')} + '%'">+0.00%</span></span>
             </p>
@@ -43,7 +45,7 @@
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="text-[10px] text-white/40 uppercase tracking-widest">Preço Unitário (R$)</label>
-                    <input type="number" step="0.01" id="txPreco" class="input-minimal w-full py-2 text-sm" required min="0.01" />
+                    <input type="number" step="0.01" min="0.01" id="txPreco" class="input-minimal w-full py-2 text-sm" required />
                 </div>
                 <button type="submit" class="w-full bg-primary-fixed text-black text-[10px] font-bold py-3 hover:bg-primary uppercase rounded">Executar Ordem</button>
             </form>
@@ -90,8 +92,8 @@
         <p class="text-[10px] text-white/40 mb-6 uppercase">Ativo: <span id="vdTicker" class="text-white font-bold"></span></p>
         <form id="formVenda" class="space-y-4">
             <input type="hidden" id="vdAtivoId" />
-            <input type="number" id="vdQtd" required class="input-minimal w-full" placeholder="Quantidade" />
-            <input type="number" id="vdPreco" step="0.01" required class="input-minimal w-full" placeholder="Preço (R$)" />
+            <input type="number" id="vdQtd" required min="1" class="input-minimal w-full" placeholder="Quantidade" />
+            <input type="number" id="vdPreco" step="0.01" min="0.01" required class="input-minimal w-full" placeholder="Preço (R$)" />
             <div class="flex justify-end gap-4 pt-4">
                 <button type="button" onclick="document.getElementById('modalVenda').classList.add('hidden')" class="text-[10px] uppercase text-white/50">Cancelar</button>
                 <button type="submit" class="bg-error text-black px-6 py-2 text-[10px] font-bold uppercase rounded">Confirmar Venda</button>
@@ -104,7 +106,7 @@
     <div class="card-stat p-8 max-w-sm w-full rounded-2xl">
         <h3 class="text-xl font-bold mb-4 text-primary">Aporte Interno</h3>
         <form id="formAporte" class="space-y-4">
-            <input type="number" id="apValor" step="0.01" required placeholder="Valor (R$)" class="input-minimal w-full text-lg" />
+            <input type="number" id="apValor" step="0.01" min="0.01" required placeholder="Valor (R$)" class="input-minimal w-full text-lg" />
             <div class="flex justify-end gap-4 pt-4">
                 <button type="button" onclick="document.getElementById('modalAporte').classList.add('hidden')" class="text-[10px] uppercase text-white/50">Cancelar</button>
                 <button type="submit" class="bg-primary text-black px-6 py-2 text-[10px] font-bold uppercase rounded">Aportar</button>
@@ -117,7 +119,7 @@
     <div class="card-stat p-8 max-w-sm w-full rounded-2xl">
         <h3 class="text-xl font-bold mb-4 text-white">Resgatar Recursos</h3>
         <form id="formSaque" class="space-y-4">
-            <input type="number" id="sqValor" step="0.01" required placeholder="Valor (R$)" class="input-minimal w-full text-lg" />
+            <input type="number" id="sqValor" step="0.01" min="0.01" required placeholder="Valor (R$)" class="input-minimal w-full text-lg" />
             <div class="flex justify-end gap-4 pt-4">
                 <button type="button" onclick="document.getElementById('modalSaque').classList.add('hidden')" class="text-[10px] uppercase text-white/50">Cancelar</button>
                 <button type="submit" class="bg-white text-black px-6 py-2 text-[10px] font-bold uppercase rounded">Resgatar</button>
@@ -148,7 +150,7 @@
                 carteiraId: idCarteira, ativoId: document.getElementById('vdAtivoId').value, tipo: 'VENDA',
                 quantidade: parseInt(document.getElementById('vdQtd').value), precoUnitario: parseFloat(document.getElementById('vdPreco').value)
             })
-        }).then(res => res.ok ? window.location.reload() : alert("Erro na liquidação"));
+        }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro na liquidação"));
     });
 
     document.getElementById('formCompra').addEventListener('submit', function(e){
@@ -160,7 +162,7 @@
                 carteiraId: idCarteira, ativoId: document.getElementById('txAtivo').value, tipo: 'COMPRA',
                 quantidade: parseInt(document.getElementById('txQtd').value), precoUnitario: parseFloat(document.getElementById('txPreco').value)
             })
-        }).then(async res => res.ok ? window.location.reload() : alert((await res.json()).erro || "Erro"));
+        }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro"));
     });
 
     document.getElementById('formAporte').addEventListener('submit', function(e){
@@ -169,7 +171,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
             body: JSON.stringify({ valor: parseFloat(document.getElementById('apValor').value) })
-        }).then(res => res.ok ? window.location.reload() : alert("Erro"));
+        }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro"));
     });
 
     document.getElementById('formSaque').addEventListener('submit', function(e){
@@ -178,7 +180,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
             body: JSON.stringify({ valor: parseFloat(document.getElementById('sqValor').value) })
-        }).then(res => res.ok ? window.location.reload() : alert("Erro"));
+        }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro"));
     });
 </script>
 </body>

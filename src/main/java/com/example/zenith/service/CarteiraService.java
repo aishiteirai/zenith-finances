@@ -2,13 +2,17 @@ package com.example.zenith.service;
 
 import com.example.zenith.model.Carteira;
 import com.example.zenith.model.Investidor;
+import com.example.zenith.model.Transacao;
+import com.example.zenith.model.TipoTransacao;
 import com.example.zenith.repository.CarteiraRepository;
 import com.example.zenith.repository.InvestidorRepository;
+import com.example.zenith.repository.TransacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,6 +20,7 @@ public class CarteiraService {
 
     @Autowired private CarteiraRepository carteiraRepository;
     @Autowired private InvestidorRepository investidorRepository;
+    @Autowired private TransacaoRepository transacaoRepository; // NOVO
 
     public List<Carteira> listarCarteiras(String email) {
         return carteiraRepository.findByInvestidorEmail(email);
@@ -31,7 +36,6 @@ public class CarteiraService {
         Investidor investidor = investidorRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Investidor não encontrado."));
 
-        // Regra de validação: Criação consome do saldo em inércia
         if (investidor.getSaldoGlobal().compareTo(valorInicial) < 0) {
             throw new RuntimeException("Deploy recusado: Saldo em inércia insuficiente no cofre global.");
         }
@@ -50,6 +54,10 @@ public class CarteiraService {
 
     @Transactional
     public Carteira processarAporte(Long carteiraId, BigDecimal valor, String email) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Aporte recusado: O valor deve ser maior que zero.");
+        }
+
         Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, email);
         Investidor investidor = carteira.getInvestidor();
 
@@ -61,11 +69,26 @@ public class CarteiraService {
         carteira.setSaldoDisponivel(carteira.getSaldoDisponivel().add(valor));
 
         investidorRepository.save(investidor);
-        return carteiraRepository.save(carteira);
+        Carteira carteiraSalva = carteiraRepository.save(carteira);
+
+        // NOVO: Regista no histórico
+        Transacao tx = new Transacao();
+        tx.setCarteira(carteiraSalva);
+        tx.setTipo(TipoTransacao.APORTE);
+        tx.setQuantidade(1);
+        tx.setPrecoUnitario(valor);
+        tx.setDataOperacao(LocalDateTime.now());
+        transacaoRepository.save(tx);
+
+        return carteiraSalva;
     }
 
     @Transactional
     public Carteira processarSaque(Long carteiraId, BigDecimal valor, String email) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Resgate recusado: O valor deve ser maior que zero.");
+        }
+
         Carteira carteira = buscarCarteiraPorIdEInvestidor(carteiraId, email);
         Investidor investidor = carteira.getInvestidor();
 
@@ -74,9 +97,20 @@ public class CarteiraService {
         }
 
         carteira.setSaldoDisponivel(carteira.getSaldoDisponivel().subtract(valor));
-        investidor.setSaldoGlobal(investidor.getSaldoGlobal().add(valor)); // Soma de volta ao saldo de inércia
+        investidor.setSaldoGlobal(investidor.getSaldoGlobal().add(valor));
 
         investidorRepository.save(investidor);
-        return carteiraRepository.save(carteira);
+        Carteira carteiraSalva = carteiraRepository.save(carteira);
+
+        // NOVO: Regista no histórico
+        Transacao tx = new Transacao();
+        tx.setCarteira(carteiraSalva);
+        tx.setTipo(TipoTransacao.RESGATE);
+        tx.setQuantidade(1);
+        tx.setPrecoUnitario(valor);
+        tx.setDataOperacao(LocalDateTime.now());
+        transacaoRepository.save(tx);
+
+        return carteiraSalva;
     }
 }

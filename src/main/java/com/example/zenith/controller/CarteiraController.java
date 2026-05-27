@@ -24,11 +24,9 @@ public class CarteiraController {
     @Autowired private CarteiraService carteiraService;
     @Autowired private AtivoRepository ativoRepository;
 
-    // --- ENDPOINTS DE INTERFACE (HTML) ---
-
     @PostMapping("/carteiras/nova")
     public String criarNovaCarteira(@RequestParam String nome,
-                                    @RequestParam BigDecimal valorAporte, // <-- Alterado de saldoInicial para valorAporte
+                                    @RequestParam BigDecimal valorAporte,
                                     @AuthenticationPrincipal UserDetails userDetails,
                                     RedirectAttributes redirectAttributes) {
         try {
@@ -45,7 +43,6 @@ public class CarteiraController {
         try {
             Carteira carteira = carteiraService.buscarCarteiraPorIdEInvestidor(id, userDetails.getUsername());
 
-            // Cálculo Matemático: Rendimento Médio Ponderado da Carteira
             BigDecimal totalInvestido = BigDecimal.ZERO;
             BigDecimal totalRendimentoPonderado = BigDecimal.ZERO;
 
@@ -64,21 +61,19 @@ public class CarteiraController {
 
             BigDecimal rendimentoMedio = BigDecimal.ZERO;
             if (totalInvestido.compareTo(BigDecimal.ZERO) > 0) {
-                // Divide o total ponderado pelo total investido (com arredondamento de 2 casas decimais)
                 rendimentoMedio = totalRendimentoPonderado.divide(totalInvestido, 2, java.math.RoundingMode.HALF_UP);
             }
 
             model.addAttribute("carteira", carteira);
-            model.addAttribute("ativos", ativoRepository.findAll());
+            model.addAttribute("ativos", ativoRepository.findByVisivelTrue());
             model.addAttribute("rendimentoMedio", rendimentoMedio);
+            model.addAttribute("totalInvestido", totalInvestido);
 
             return "carteira-detalhes";
         } catch (Exception e) {
             return "redirect:/home";
         }
     }
-
-    // --- ENDPOINTS DE API (AJAX/Fetch) ---
 
     @PostMapping("/api/carteiras/{id}/aporte")
     @ResponseBody
