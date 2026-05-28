@@ -5,8 +5,6 @@ import com.example.zenith.model.Posicao;
 import com.example.zenith.repository.AtivoRepository;
 import com.example.zenith.service.CarteiraService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class CarteiraController {
@@ -33,7 +29,8 @@ public class CarteiraController {
             carteiraService.criarCarteira(userDetails.getUsername(), nome, valorAporte);
             return "redirect:/home";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erroCriacao", e.getMessage());
+            // Envia a mensagem de erro (ex: Saldo insuficiente) para a próxima tela
+            redirectAttributes.addFlashAttribute("erroSistema", e.getMessage());
             return "redirect:/home";
         }
     }
@@ -75,35 +72,31 @@ public class CarteiraController {
         }
     }
 
-    @PostMapping("/api/carteiras/{id}/aporte")
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> realizarAporte(@PathVariable Long id,
-                                                              @RequestBody Map<String, BigDecimal> payload,
-                                                              @AuthenticationPrincipal UserDetails userDetails) {
-        Map<String, String> response = new HashMap<>();
+    // CORREÇÃO CRÍTICA: As rotas de Aporte e Saque agora são submissões de formulário clássico (@RequestParam)
+    // Isso liga perfeitamente com os formulários do seu ficheiro carteira-detalhes.html
+    @PostMapping("/carteiras/{id}/aporte")
+    public String realizarAporte(@PathVariable Long id,
+                                 @RequestParam BigDecimal valor,
+                                 @AuthenticationPrincipal UserDetails userDetails,
+                                 RedirectAttributes redirectAttributes) {
         try {
-            carteiraService.processarAporte(id, payload.get("valor"), userDetails.getUsername());
-            response.put("mensagem", "Aporte realizado com sucesso!");
-            return ResponseEntity.ok(response);
+            carteiraService.processarAporte(id, valor, userDetails.getUsername());
         } catch (Exception e) {
-            response.put("erro", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            redirectAttributes.addFlashAttribute("erroSistema", e.getMessage());
         }
+        return "redirect:/carteiras/" + id; // Dá um "refresh" na página automaticamente
     }
 
-    @PostMapping("/api/carteiras/{id}/saque")
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> realizarSaque(@PathVariable Long id,
-                                                             @RequestBody Map<String, BigDecimal> payload,
-                                                             @AuthenticationPrincipal UserDetails userDetails) {
-        Map<String, String> response = new HashMap<>();
+    @PostMapping("/carteiras/{id}/saque")
+    public String realizarSaque(@PathVariable Long id,
+                                @RequestParam BigDecimal valor,
+                                @AuthenticationPrincipal UserDetails userDetails,
+                                RedirectAttributes redirectAttributes) {
         try {
-            carteiraService.processarSaque(id, payload.get("valor"), userDetails.getUsername());
-            response.put("mensagem", "Saque processado com sucesso!");
-            return ResponseEntity.ok(response);
+            carteiraService.processarSaque(id, valor, userDetails.getUsername());
         } catch (Exception e) {
-            response.put("erro", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            redirectAttributes.addFlashAttribute("erroSistema", e.getMessage());
         }
+        return "redirect:/carteiras/" + id; // Dá um "refresh" na página automaticamente
     }
 }
