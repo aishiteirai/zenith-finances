@@ -3,10 +3,7 @@ package com.example.zenith.controller;
 import com.example.zenith.model.Ativo;
 import com.example.zenith.model.Investidor;
 import com.example.zenith.model.Transacao;
-import com.example.zenith.repository.AtivoRepository;
-import com.example.zenith.repository.InvestidorRepository;
-import com.example.zenith.repository.TransacaoRepository;
-import com.example.zenith.repository.CarteiraRepository;
+import com.example.zenith.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +19,7 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
+    @Autowired private PosicaoRepository posicaoRepository;
     @Autowired private InvestidorRepository investidorRepository;
     @Autowired private AtivoRepository ativoRepository;
     @Autowired private TransacaoRepository transacaoRepository;
@@ -29,25 +27,28 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        // 1. Telemetria Quantitativa da Rede
         long totalUsuarios = investidorRepository.count();
         long totalAtivos = ativoRepository.count();
         long totalTransacoes = transacaoRepository.count();
 
-        // 2. Cálculo do AUM Global (Assets Under Management)
-        // Soma o saldo em inércia de todas as contas do sistema
+        // 1. Dinheiro no cofre global
         BigDecimal totalSaldosInercia = investidorRepository.findAll().stream()
                 .map(Investidor::getSaldoGlobal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Soma o capital alocado em todas as carteiras da plataforma
+        // 2. Dinheiro em caixa dentro das carteiras
         BigDecimal totalCaixaCarteiras = carteiraRepository.findAll().stream()
                 .map(c -> c.getSaldoDisponivel())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal aumGlobal = totalSaldosInercia.add(totalCaixaCarteiras);
+        // 3. NOVO: Valor real dos ativos comprados (Quantidade * Preço Médio)
+        BigDecimal totalInvestido = posicaoRepository.findAll().stream()
+                .map(p -> p.getPrecoMedio().multiply(new BigDecimal(p.getQuantidadeAtual())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Envia as métricas consolidadas para a interface
+        // AUM Global Real = Caixa Total + Ativos Custodiados
+        BigDecimal aumGlobal = totalSaldosInercia.add(totalCaixaCarteiras).add(totalInvestido);
+
         model.addAttribute("totalUsuarios", totalUsuarios);
         model.addAttribute("totalAtivos", totalAtivos);
         model.addAttribute("totalTransacoes", totalTransacoes);

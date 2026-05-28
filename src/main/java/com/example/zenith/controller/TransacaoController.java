@@ -1,15 +1,12 @@
 package com.example.zenith.controller;
 
 import com.example.zenith.dto.TransacaoRequestDTO;
-import com.example.zenith.exception.SaldoInsuficienteException;
 import com.example.zenith.service.TransacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/transacoes")
@@ -19,26 +16,20 @@ public class TransacaoController {
     private TransacaoService transacaoService;
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> registrarTransacao(@RequestBody TransacaoRequestDTO dto) {
-        Map<String, String> response = new HashMap<>();
-
+    public ResponseEntity<?> registrarTransacao(
+            @RequestBody TransacaoRequestDTO request,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            // Executa o fluxo do Service
-            transacaoService.registrarNovaTransacao(dto);
+            // CORREÇÃO: Chama o novo método seguro, injetando a identidade real do usuário (Anti-IDOR)
+            transacaoService.executarTransacao(request, userDetails.getUsername());
 
-            // Retorna 201 Created (Sucesso)
-            response.put("mensagem", "Compra realizada com sucesso!");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (SaldoInsuficienteException e) {
-            // Retorna 400 Bad Request (Erro de saldo)
-            response.put("erro", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-
+            return ResponseEntity.ok().body("{\"mensagem\": \"Transação executada com sucesso.\"}");
+        } catch (SecurityException e) {
+            // Tratamento específico para tentativa de invasão (IDOR)
+            return ResponseEntity.status(403).body("{\"erro\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
-            // Outros erros genéricos (ex: Ativo não encontrado)
-            response.put("erro", "Erro interno: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            // Tratamento genérico (saldo insuficiente, etc)
+            return ResponseEntity.badRequest().body("{\"erro\": \"" + e.getMessage() + "\"}");
         }
     }
 }

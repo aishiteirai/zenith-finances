@@ -54,4 +54,25 @@ public class Carteira {
     public boolean verificarSaldoSuficiente(BigDecimal valorRequerido) {
         return this.saldoDisponivel.compareTo(valorRequerido) >= 0;
     }
+
+    // Este método não cria uma coluna no banco, apenas calcula em tempo real
+    @Transient
+    public BigDecimal getCapitalAlocado() {
+        if (this.posicoes == null || this.posicoes.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (Posicao p : this.posicoes) {
+            if (p.getQuantidadeAtual() > 0) {
+                // Se o ativo tiver um preço de mercado atualizado pela API, usa ele. Senão, usa o preço que pagou.
+                BigDecimal precoMercado = (p.getAtivo().getPrecoAtual() != null && p.getAtivo().getPrecoAtual().compareTo(BigDecimal.ZERO) > 0)
+                        ? p.getAtivo().getPrecoAtual()
+                        : p.getPrecoMedio();
+
+                total = total.add(precoMercado.multiply(new BigDecimal(p.getQuantidadeAtual())));
+            }
+        }
+        return total;
+    }
 }
