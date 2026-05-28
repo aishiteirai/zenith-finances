@@ -2,139 +2,182 @@ package com.example.zenith.config;
 
 import com.example.zenith.model.*;
 import com.example.zenith.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.List;
 
-@Configuration
-public class DataInitializer {
+@Component
+public class DataInitializer implements CommandLineRunner {
 
-    @Bean
-    public CommandLineRunner carregarDadosIniciais(AtivoRepository ativoRepository,
-                                                   InvestidorRepository investidorRepository,
-                                                   CarteiraRepository carteiraRepository,
-                                                   PosicaoRepository posicaoRepository,
-                                                   TransacaoRepository transacaoRepository,
-                                                   PasswordEncoder passwordEncoder) {
-        return args -> {
-            if (ativoRepository.count() == 0) {
-                // Renda Fixa
-                Ativo cdb = new Ativo();
-                cdb.setTicker("CDB-ITAU-2027");
-                cdb.setNomeEmpresa("Banco Itaú");
-                cdb.setCategoria("RENDA_FIXA");
-                cdb.setTaxaRendimentoEstimada(new BigDecimal("110.00"));
-                cdb.setTipoRentabilidade("CDI");
-                cdb.setValorMinimo(new BigDecimal("100.00"));
+    @Autowired private InvestidorRepository investidorRepository;
+    @Autowired private CarteiraRepository carteiraRepository;
+    @Autowired private AtivoRepository ativoRepository;
+    @Autowired private TransacaoRepository transacaoRepository;
+    @Autowired private PosicaoRepository posicaoRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
-                Ativo tesouro = new Ativo();
-                tesouro.setTicker("TESOURO-PRE-2029");
-                tesouro.setNomeEmpresa("Tesouro Nacional");
-                tesouro.setCategoria("RENDA_FIXA");
-                tesouro.setTaxaRendimentoEstimada(new BigDecimal("10.50"));
-                tesouro.setTipoRentabilidade("PREFIXADO");
-                tesouro.setValorMinimo(new BigDecimal("30.00"));
+    @Override
+    public void run(String... args) throws Exception {
+        // Verifica se o banco já foi populado
+        if (investidorRepository.count() > 0) {
+            System.out.println("[ZENITH SYSTEM] Banco de dados persistente detectado. Puxando dados existentes...");
+            return;
+        }
 
-                // Criptoativos
-                Ativo btc = new Ativo();
-                btc.setTicker("BTC/BRL");
-                btc.setNomeEmpresa("Bitcoin");
-                btc.setCategoria("CRIPTO");
-                btc.setTaxaRendimentoEstimada(new BigDecimal("14.20"));
-                btc.setTipoRentabilidade("VARIAVEL");
-                btc.setValorMinimo(BigDecimal.ZERO); // Sem valor mínimo
+        System.out.println("[ZENITH SYSTEM] Inicializando novo banco de dados. Semeando dados históricos...");
 
-                Ativo eth = new Ativo();
-                eth.setTicker("ETH/BRL");
-                eth.setNomeEmpresa("Ethereum");
-                eth.setCategoria("CRIPTO");
-                eth.setTaxaRendimentoEstimada(new BigDecimal("22.10"));
-                eth.setTipoRentabilidade("VARIAVEL");
-                eth.setValorMinimo(BigDecimal.ZERO);
+        // 1. Criação do Admin
+        Investidor admin = new Investidor();
+        admin.setNome("Master Node Admin");
+        admin.setEmail("admin@zenith.node");
+        admin.setSenhaHash(passwordEncoder.encode("admin1234")); // Temporário até aplicar a correção do review
+        admin.setRole("ROLE_ADMIN");
+        admin.setSaldoGlobal(BigDecimal.ZERO);
+        admin.setBloqueado(false);
+        investidorRepository.save(admin);
 
-                // Ações
-                Ativo petr4 = new Ativo();
-                petr4.setTicker("PETR4");
-                petr4.setNomeEmpresa("Petrobras");
-                petr4.setCategoria("ACAO");
-                petr4.setTaxaRendimentoEstimada(new BigDecimal("15.20"));
-                petr4.setTipoRentabilidade("VARIAVEL");
-                petr4.setValorMinimo(new BigDecimal("50.00"));
+        // 2. Criação de Usuários Secundários
+        Investidor user2 = new Investidor();
+        user2.setNome("Elena Fisher");
+        user2.setEmail("elena@zenith.node");
+        user2.setSenhaHash(passwordEncoder.encode("senha123"));
+        user2.setRole("ROLE_USER");
+        user2.setSaldoGlobal(new BigDecimal("150000.00"));
+        user2.setBloqueado(false);
+        investidorRepository.save(user2);
 
-                Ativo vale3 = new Ativo();
-                vale3.setTicker("VALE3");
-                vale3.setNomeEmpresa("Vale S.A.");
-                vale3.setCategoria("ACAO");
-                vale3.setTaxaRendimentoEstimada(new BigDecimal("11.40"));
-                vale3.setTipoRentabilidade("VARIAVEL");
-                vale3.setValorMinimo(new BigDecimal("70.00"));
+        // 3. Criação do Usuário Principal
+        Investidor user = new Investidor();
+        user.setNome("Satoshi Nakamoto");
+        user.setEmail("user@zenith.node");
+        user.setSenhaHash(passwordEncoder.encode("SenhaForte1234"));
+        user.setRole("ROLE_USER");
+        user.setSaldoGlobal(new BigDecimal("50000.00"));
+        user.setBloqueado(false);
+        investidorRepository.save(user);
 
-                ativoRepository.saveAll(Arrays.asList(cdb, tesouro, btc, eth, petr4, vale3));
-            }
+        // 4. Catálogo de Ativos Expandido usando o Helper Method seguro
+        Ativo btc = criarAtivo("BTC/BRL", "Bitcoin", "CRIPTO", "45.5", "VARIAVEL", "0", true);
+        Ativo eth = criarAtivo("ETH/BRL", "Ethereum", "CRIPTO", "32.1", "VARIAVEL", "0", true);
+        Ativo sol = criarAtivo("SOL/BRL", "Solana", "CRIPTO", "60.0", "VARIAVEL", "0", true);
 
-            String emailPadrao = "user@zenith.node";
-            if (investidorRepository.findByEmail(emailPadrao).isEmpty()) {
-                Investidor investidor = new Investidor();
-                investidor.setNome("Satoshi Zenith");
-                investidor.setEmail(emailPadrao);
-                investidor.setSenhaHash(passwordEncoder.encode("SenhaForte1234"));
-                investidor.setSaldoGlobal(new BigDecimal("85000.00")); // Inércia Inicial
-                investidor = investidorRepository.save(investidor);
+        Ativo petr4 = criarAtivo("PETR4", "Petrobras PN", "ACAO", "12.4", "DIVIDENDOS", "35.00", true);
+        Ativo vale3 = criarAtivo("VALE3", "Vale ON", "ACAO", "9.2", "DIVIDENDOS", "60.00", true);
+        Ativo wege3 = criarAtivo("WEGE3", "WEG SA", "ACAO", "15.8", "CRESCIMENTO", "40.00", true);
+        Ativo ivvb11 = criarAtivo("IVVB11", "iShares S&P 500", "ACAO", "18.5", "ETF", "280.00", true);
 
-                // Carteiras Iniciais
-                Carteira c1 = new Carteira();
-                c1.setNome("Arquitetura Alpha Growth");
-                c1.setSaldoDisponivel(new BigDecimal("15000.00"));
-                c1.setDataCriacao(LocalDate.now().minusMonths(1));
-                c1.setInvestidor(investidor);
-                carteiraRepository.save(c1);
+        Ativo mxrf11 = criarAtivo("MXRF11", "Maxi Renda FII", "FII", "11.5", "RENDIMENTO_MENSAL", "10.50", true);
+        Ativo hglg11 = criarAtivo("HGLG11", "CSHG Logística", "FII", "9.8", "RENDIMENTO_MENSAL", "165.00", true);
 
-                Carteira c2 = new Carteira();
-                c2.setNome("Reserva Defensiva");
-                c2.setSaldoDisponivel(new BigDecimal("10000.00"));
-                c2.setDataCriacao(LocalDate.now().minusDays(5));
-                c2.setInvestidor(investidor);
-                carteiraRepository.save(c2);
+        Ativo cdbItau = criarAtivo("CDB-ITAU", "Banco Itaú S.A.", "RENDA_FIXA", "11.15", "CDI", "100.00", true);
+        Ativo tesouroSelic = criarAtivo("TD-SELIC", "Tesouro Nacional", "RENDA_FIXA", "10.5", "SELIC", "130.00", true);
 
-                // Posições de Exemplo
-                Ativo petr4 = ativoRepository.findAll().stream().filter(a -> a.getTicker().equals("PETR4")).findFirst().get();
-                Posicao pos = new Posicao();
-                pos.setCarteira(c1);
-                pos.setAtivo(petr4);
-                pos.setQuantidadeAtual(200);
-                pos.setPrecoMedio(new BigDecimal("32.10"));
-                posicaoRepository.save(pos);
+        ativoRepository.saveAll(List.of(btc, eth, sol, petr4, vale3, wege3, ivvb11, mxrf11, hglg11, cdbItau, tesouroSelic));
 
-                // Transação Histórica
-                Transacao tx = new Transacao();
-                tx.setCarteira(c1);
-                tx.setAtivo(petr4);
-                tx.setQuantidade(200);
-                tx.setPrecoUnitario(new BigDecimal("32.10"));
-                tx.setTipo(TipoTransacao.COMPRA);
-                tx.setDataOperacao(LocalDateTime.now().minusDays(12));
-                transacaoRepository.save(tx);
+        // 5. Estruturas (Carteiras) usando o Helper Method seguro
+        Carteira cartCripto = criarCarteira(user, "Cold Wallet Cripto", "1500000.00"); // 1.5 Milhão
+        Carteira cartAcoes = criarCarteira(user, "Ações Longo Prazo", "500000.00");
+        Carteira cartRendaFixa = criarCarteira(user, "Reserva de Oportunidade", "800000.00");
+        carteiraRepository.saveAll(List.of(cartCripto, cartAcoes, cartRendaFixa));
 
-                System.out.println("[ZENITH ENGINE] Inicialização Concluída.");
-            }
+        // 6. Gerador Temporal Seguro de Transações
+        LocalDateTime hoje = LocalDateTime.now();
 
-            String emailAdmin = "admin@zenith.node";
-            if (investidorRepository.findByEmail(emailAdmin).isEmpty()) {
-                Investidor admin = new Investidor();
-                admin.setNome("Master Node Admin");
-                admin.setEmail(emailAdmin);
-                admin.setSenhaHash(passwordEncoder.encode("admin1234"));
-                admin.setSaldoGlobal(BigDecimal.ZERO);
-                admin.setRole("ROLE_ADMIN");
+        realizarOperacao(cartCripto, btc, TipoTransacao.COMPRA, 2, new BigDecimal("250000.00"), hoje.minusMonths(5).minusDays(10));
+        realizarOperacao(cartAcoes, petr4, TipoTransacao.COMPRA, 500, new BigDecimal("32.50"), hoje.minusMonths(5).minusDays(5));
 
-                investidorRepository.save(admin);
-                System.out.println("[ZENITH SECURITY] Node Admin mestre criado com sucesso.");
-            }
-        };
+        realizarOperacao(cartAcoes, vale3, TipoTransacao.COMPRA, 200, new BigDecimal("65.00"), hoje.minusMonths(4).minusDays(15));
+        realizarOperacao(cartCripto, eth, TipoTransacao.COMPRA, 5, new BigDecimal("15000.00"), hoje.minusMonths(4).minusDays(2));
+
+        realizarOperacao(cartRendaFixa, tesouroSelic, TipoTransacao.COMPRA, 100, new BigDecimal("130.00"), hoje.minusMonths(3).minusDays(20));
+        realizarOperacao(cartAcoes, ivvb11, TipoTransacao.COMPRA, 50, new BigDecimal("250.00"), hoje.minusMonths(3).minusDays(8));
+
+        realizarOperacao(cartAcoes, wege3, TipoTransacao.COMPRA, 300, new BigDecimal("38.00"), hoje.minusMonths(2).minusDays(12));
+        realizarOperacao(cartAcoes, petr4, TipoTransacao.VENDA, 100, new BigDecimal("39.00"), hoje.minusMonths(2).minusDays(5));
+
+        realizarOperacao(cartRendaFixa, cdbItau, TipoTransacao.COMPRA, 200, new BigDecimal("100.00"), hoje.minusMonths(1).minusDays(18));
+        realizarOperacao(cartAcoes, hglg11, TipoTransacao.COMPRA, 100, new BigDecimal("160.00"), hoje.minusMonths(1).minusDays(10));
+
+        realizarOperacao(cartCripto, btc, TipoTransacao.COMPRA, 1, new BigDecimal("360000.00"), hoje.minusDays(2));
+
+        System.out.println("[ZENITH SYSTEM] Dados simulados com sucesso.");
+    }
+
+    // ==============================================================
+    // HELPER METHODS (Constroem os objetos de forma segura via Setters)
+    // ==============================================================
+
+    private Ativo criarAtivo(String ticker, String nome, String cat, String taxa, String tipo, String min, boolean visivel) {
+        Ativo a = new Ativo();
+        a.setTicker(ticker);
+        a.setNomeEmpresa(nome);
+        a.setCategoria(cat);
+        a.setTaxaRendimentoEstimada(new BigDecimal(taxa));
+        a.setTipoRentabilidade(tipo);
+        a.setValorMinimo(new BigDecimal(min));
+        a.setVisivel(visivel);
+        return a;
+    }
+
+    private Carteira criarCarteira(Investidor inv, String nome, String saldo) {
+        Carteira c = new Carteira();
+        c.setInvestidor(inv);
+        c.setNome(nome);
+        c.setSaldoDisponivel(new BigDecimal(saldo));
+        // Se a sua carteira tiver dataCriacao ou outros campos, defina aqui.
+        return c;
+    }
+
+    private void realizarOperacao(Carteira carteiraParam, Ativo ativoParam, TipoTransacao tipo, int qtd, BigDecimal preco, LocalDateTime data) {
+        // 1. RE-FETCH: Busca os objetos "frescos" e anexados ao Hibernate para evitar o erro de Orphan Collection
+        Carteira c = carteiraRepository.findById(carteiraParam.getId()).orElseThrow();
+        Ativo a = ativoRepository.findById(ativoParam.getId()).orElseThrow();
+
+        // 2. Agora usamos as variáveis 'c' e 'a' seguras para o resto da lógica
+        Transacao tx = new Transacao();
+        tx.setCarteira(c);
+        tx.setAtivo(a);
+        tx.setTipo(tipo);
+        tx.setQuantidade(qtd);
+        tx.setPrecoUnitario(preco);
+        tx.setDataOperacao(data);
+        transacaoRepository.save(tx);
+
+        BigDecimal valorTotal = preco.multiply(new BigDecimal(qtd));
+
+        if (tipo == TipoTransacao.COMPRA) {
+            c.setSaldoDisponivel(c.getSaldoDisponivel().subtract(valorTotal));
+        } else {
+            c.setSaldoDisponivel(c.getSaldoDisponivel().add(valorTotal));
+        }
+        carteiraRepository.save(c);
+
+        Posicao p = posicaoRepository.findByCarteiraIdAndAtivoId(c.getId(), a.getId()).orElseGet(() -> {
+            Posicao nova = new Posicao();
+            nova.setCarteira(c);
+            nova.setAtivo(a);
+            nova.setQuantidadeAtual(0);
+            nova.setPrecoMedio(BigDecimal.ZERO);
+            return nova;
+        });
+
+        if (tipo == TipoTransacao.COMPRA) {
+            int novaQtd = p.getQuantidadeAtual() + qtd;
+            BigDecimal totalAtual = p.getPrecoMedio().multiply(new BigDecimal(p.getQuantidadeAtual()));
+            BigDecimal novoPrecoMedio = totalAtual.add(valorTotal).divide(new BigDecimal(novaQtd), 6, RoundingMode.HALF_UP);
+
+            p.setQuantidadeAtual(novaQtd);
+            p.setPrecoMedio(novoPrecoMedio);
+        } else {
+            p.setQuantidadeAtual(p.getQuantidadeAtual() - qtd);
+        }
+
+        posicaoRepository.save(p);
     }
 }
