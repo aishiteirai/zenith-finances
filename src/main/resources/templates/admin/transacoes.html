@@ -44,11 +44,8 @@
                 <tr th:each="tx : ${transacoes}" class="border-b border-white/5 hover:bg-white/5 transition-colors font-mono text-xs">
                     <td class="p-4 text-white/50" th:text="${#temporals.format(tx.dataOperacao, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <td class="p-4 text-white font-bold" th:text="${tx.carteira.investidor.email}">email</td>
-                    <td class="p-4"><span class="bg-white/10 px-2 py-0.5 rounded text-white" th:text="${tx.ativo.ticker}"></span></td>
-                    <td class="p-4">
-                        <span th:if="${tx.tipo.name() == 'COMPRA'}" class="text-primary font-bold">COMPRA</span>
-                        <span th:if="${tx.tipo.name() == 'VENDA'}" class="text-error font-bold">VENDA</span>
-                    </td>
+                    <td class="p-4" th:text="${tx.ativo.ticker}"></td>
+                    <td class="p-4" th:text="${tx.ativo != null ? tx.ativo.ticker : tx.tipo.name()}"></td>
                     <td class="p-4 text-right text-white/60" th:text="${tx.quantidade} + ' un. @ R$ ' + ${tx.precoUnitario}"></td>
                     <td class="p-4 text-right font-bold text-white" th:text="'R$ ' + ${#numbers.formatDecimal(tx.quantidade * tx.precoUnitario, 1, 'POINT', 2, 'COMMA')}"></td>
                 </tr>

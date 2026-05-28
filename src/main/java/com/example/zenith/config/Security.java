@@ -43,7 +43,7 @@ public class Security {
                 );
 
         // Permite a renderização correta das tabelas do console H2 através de frames
-        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
+        http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }

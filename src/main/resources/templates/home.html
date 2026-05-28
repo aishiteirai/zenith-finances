@@ -150,16 +150,24 @@
 </div>
 
 <script>
-    document.getElementById('formAporteGlobal').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const token = document.querySelector('meta[name="_csrf"]').content;
-        const header = document.querySelector('meta[name="_csrf_header"]').content;
-        fetch('/api/investidor/aporte-global', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', [header]: token },
-            body: JSON.stringify({ valor: parseFloat(document.getElementById('valorGlobal').value) })
-        }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro no depósito"));
-    });
+
+    function abrirModalNovaCarteira() {
+        document.getElementById('modalNovaCarteira').classList.remove('hidden');
+        document.getElementById('formAporteGlobal').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const token = document.querySelector('meta[name="_csrf"]').content;
+            const header = document.querySelector('meta[name="_csrf_header"]').content;
+            fetch('/api/investidor/aporte-global', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', [header]: token},
+                body: JSON.stringify({valor: parseFloat(document.getElementById('valorGlobal').value)})
+            }).then(async res => res.ok ? window.location.reload() : showSystemToast((await res.json()).erro || "Erro no depósito"));
+        });
+        document.getElementById('formAporteGlobal').addEventListener('submit', function(e) {
+            // ...
+        });
+
+    }
 </script>
 </body>
 </html>

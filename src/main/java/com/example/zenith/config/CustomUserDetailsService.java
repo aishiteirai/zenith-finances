@@ -27,9 +27,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(investidor.getRole()));
 
+        // O terceiro parâmetro do contrutor User define se a conta está 'enabled' (ativa)
         return new User(
                 investidor.getEmail(),
                 investidor.getSenhaHash(),
+                !investidor.isBloqueado(), // Se bloqueado for true, enabled será false
+                true,
+                true,
+                true,
                 authorities
         );
     }
