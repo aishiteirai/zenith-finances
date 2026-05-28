@@ -21,7 +21,6 @@ tailwind.config = {
                 "error-container": "#93000a",
                 "secondary": "#c9c6c5",
                 "on-secondary": "#313030"
-                // Adicione as demais cores do seu tema aqui...
             },
             fontFamily: {
                 "headline-lg": ["Inter"],
