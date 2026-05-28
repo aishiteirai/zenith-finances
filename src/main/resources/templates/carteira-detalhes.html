@@ -86,21 +86,146 @@
     </div>
 </main>
 
-<div id="modalVenda" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center">
-    <div class="card-stat p-8 max-w-sm w-full rounded-2xl border border-error/30">
-        <h3 class="text-xl font-bold mb-2 text-error">Liquidação de Ativo</h3>
-        <p class="text-[10px] text-white/40 mb-6 uppercase">Ativo: <span id="vdTicker" class="text-white font-bold"></span></p>
-        <form id="formVenda" class="space-y-4">
-            <input type="hidden" id="vdAtivoId" />
-            <input type="number" id="vdQtd" required min="1" class="input-minimal w-full" placeholder="Quantidade" />
-            <input type="number" id="vdPreco" step="0.01" min="0.01" required class="input-minimal w-full" placeholder="Preço (R$)" />
-            <div class="flex justify-end gap-4 pt-4">
-                <button type="button" onclick="document.getElementById('modalVenda').classList.add('hidden')" class="text-[10px] uppercase text-white/50">Cancelar</button>
-                <button type="submit" class="bg-error text-black px-6 py-2 text-[10px] font-bold uppercase rounded">Confirmar Venda</button>
+<div class="glass-panel p-8 rounded-2xl max-w-xl mx-auto mt-8">
+    <h3 class="text-xl font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-fixed">currency_exchange</span>
+        Boleta de Negociação
+    </h3>
+
+    <form id="formTransacao" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4 bg-[#0a0a0a] p-1.5 rounded-xl border border-white/5">
+            <button type="button" onclick="setTipoOrdem('COMPRA')" id="btnOrdemCompra" class="w-full py-2.5 text-xs font-bold uppercase rounded-lg bg-primary-fixed text-black transition-all">
+                COMPRA
+            </button>
+            <button type="button" onclick="setTipoOrdem('VENDA')" id="btnOrdemVenda" class="w-full py-2.5 text-xs font-bold uppercase rounded-lg text-white/40 hover:text-white transition-all">
+                VENDA
+            </button>
+        </div>
+
+        <div>
+            <label class="text-[10px] text-white/40 uppercase tracking-widest block mb-2">Selecione o Ativo</label>
+            <select id="selectAtivo" onchange="atualizarPrecoMercado()" required class="input-minimal w-full py-3 bg-[#0a0a0a]">
+                <option value="" data-preco="0">-- Escolha um Ativo --</option>
+                <option th:each="a : ${ativos}"
+                        th:if="${a.visivel}"
+                        th:value="${a.id}"
+                        th:data-preco="${a.precoAtual != null ? a.precoAtual : a.taxaRendimentoEstimada}"
+                        th:text="${a.ticker} + ' - ' + ${a.nomeEmpresa}">
+                </option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="text-[10px] text-white/40 uppercase tracking-widest block mb-2">Preço de Mercado (Cotado)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-3.5 text-xs text-white/30">R$</span>
+                    <input type="number" id="inputPreco" readonly class="input-minimal w-full pl-10 py-3 bg-white/5 text-white/60 font-mono" value="0.00"/>
+                </div>
             </div>
-        </form>
-    </div>
+            <div>
+                <label class="text-[10px] text-white/40 uppercase tracking-widest block mb-2">Quantidade de Unidades</label>
+                <input type="number" id="inputQuantidade" oninput="calcularTotalBoleta()" min="1" required class="input-minimal w-full py-3 font-mono" placeholder="0"/>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white/5 border border-white/5 rounded-xl flex justify-between items-center font-mono">
+            <span class="text-[10px] text-white/40 uppercase tracking-widest">Valuation Estimado:</span>
+            <span id="labelTotalOrdem" class="text-lg font-bold text-white">R$ 0,00</span>
+        </div>
+
+        <button type="submit" id="btnDispararOrdem" class="w-full py-4 bg-primary-fixed text-black text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-green-400 transition-all shadow-lg shadow-primary/10">
+            Executar Ordem de Compra
+        </button>
+    </form>
 </div>
+
+<script th:inline="javascript">
+    let tipoOrdemAtual = 'COMPRA';
+
+    function setTipoOrdem(tipo) {
+        tipoOrdemAtual = tipo;
+        const btnCompra = document.getElementById('btnOrdemCompra');
+        const btnVenda = document.getElementById('btnOrdemVenda');
+        const btnSubmit = document.getElementById('btnDispararOrdem');
+
+        if (tipo === 'COMPRA') {
+            btnCompra.className = "w-full py-2.5 text-xs font-bold uppercase rounded-lg bg-primary-fixed text-black transition-all";
+            btnVenda.className = "w-full py-2.5 text-xs font-bold uppercase rounded-lg text-white/40 hover:text-white transition-all";
+            btnSubmit.className = "w-full py-4 bg-primary-fixed text-black text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-green-400 transition-all shadow-lg";
+            btnSubmit.innerText = "Executar Ordem de Compra";
+        } else {
+            btnVenda.className = "w-full py-2.5 text-xs font-bold uppercase rounded-lg bg-error text-black transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)]";
+            btnCompra.className = "w-full py-2.5 text-xs font-bold uppercase rounded-lg text-white/40 hover:text-white transition-all";
+            btnSubmit.className = "w-full py-4 bg-error text-black text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-red-500 transition-all shadow-lg";
+            btnSubmit.innerText = "Executar Ordem de Venda (Liquidação)";
+        }
+        calcularTotalBoleta();
+    }
+
+    function actualizarPrecoMercado() {
+        const select = document.getElementById('selectAtivo');
+        const optionSelecionada = select.options[select.selectedIndex];
+        // Puxa o preço de mercado atualizado injetado no atributo data-preco
+        const precoAtual = parseFloat(optionSelecionada.getAttribute('data-preco')) || 0;
+
+        document.getElementById('inputPreco').value = precoAtual.toFixed(2);
+        calcularTotalBoleta();
+    }
+
+    function calcularTotalBoleta() {
+        const preco = parseFloat(document.getElementById('inputPreco').value) || 0;
+        const qtd = parseInt(document.getElementById('inputQuantidade').value) || 0;
+        const total = preco * qtd;
+
+        document.getElementById('labelTotalOrdem').innerText = 'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+
+    // Interceptador do Submit para enviar via API Rest do TransacaoController
+    document.getElementById('formTransacao').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const carteiraId = [[${carteira.id}]]; // ID da carteira atual injetado pelo Thymeleaf
+        const ativoId = document.getElementById('selectAtivo').value;
+        const quantidade = document.getElementById('inputQuantidade').value;
+        const precoUnitario = document.getElementById('inputPreco').value;
+
+        if (!ativoId || quantidade <= 0) {
+            alert('Por favor, preencha todos os campos da boleta operacional.');
+            return;
+        }
+
+        const payload = {
+            carteiraId: parseInt(carteiraId),
+            ativoId: parseInt(ativoId),
+            quantidade: parseInt(quantidade),
+            precoUnitario: parseFloat(precoUnitario),
+            tipo: tipoOrdemAtual
+        };
+
+        // Captura das meta tags anti-CSRF do Zenith
+        const token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+        const header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+        fetch('/api/transacoes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                if (res.status === 200) {
+                    window.location.reload(); // Recarrega para ver os novos saldos valorizados instantaneamente
+                } else {
+                    alert('Erro na Operação: ' + (res.body.erro || 'Falha desconhecida.'));
+                }
+            })
+            .catch(err => console.error('Erro na boleta:', err));
+    });
+</script>
 
 <div id="modalAporte" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center">
     <div class="card-stat p-8 max-w-sm w-full rounded-2xl">

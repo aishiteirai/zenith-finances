@@ -109,6 +109,8 @@
   const cartData = /*[[${cartData}]]*/ [];
   const patrimonioTotal = /*[[${patrimonioTotal}]]*/ 0;
   const totalCaixa = /*[[${totalCaixa}]]*/ 0;
+  const labelsMeses = /*[[${labelsMeses}]]*/ ['M1', 'M2', 'M3', 'M4', 'M5', 'Atual'];
+  const historicoAum = /*[[${historicoAum}]]*/ [0, 0, 0, 0, 0, 0];
 
   Chart.defaults.color = '#b9ccaf';
   Chart.defaults.font.family = "'JetBrains Mono', monospace";
@@ -116,14 +118,29 @@
   new Chart(document.getElementById('chartEvolucao').getContext('2d'), {
     type: 'line',
     data: {
-      labels: ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai (Atual)'],
+      labels: labelsMeses,
       datasets: [{
-        label: 'Património Consolidado (R$)',
-        data: [patrimonioTotal * 0.65, patrimonioTotal * 0.72, patrimonioTotal * 0.80, patrimonioTotal * 0.88, patrimonioTotal * 0.94, patrimonioTotal],
-        backgroundColor: 'rgba(119, 255, 97, 0.03)', borderColor: '#77ff61', borderWidth: 2, pointBackgroundColor: '#77ff61', pointBorderColor: '#0a0a0a', pointHoverRadius: 6, tension: 0.2, fill: true
+        label: 'Patrimônio Consolidado (R$)',
+        data: historicoAum,
+        backgroundColor: 'rgba(119, 255, 97, 0.05)',
+        borderColor: '#77ff61',
+        borderWidth: 2,
+        pointBackgroundColor: '#77ff61',
+        pointBorderColor: '#0a0a0a',
+        pointHoverRadius: 6,
+        tension: 0.3,
+        fill: true
       }]
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') } },
+        x: { grid: { display: false } }
+      },
+      plugins: { legend: { display: false } }
+    }
   });
 
   new Chart(document.getElementById('chartCategorias').getContext('2d'), {
